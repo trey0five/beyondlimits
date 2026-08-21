@@ -347,6 +347,16 @@
     );
     fIO.observe(founderStage);
   }
+  /* mobile-only "Read Her Story" expander in the founder bio */
+  const founderToggle = $('#founderToggle');
+  if (founderToggle) {
+    founderToggle.addEventListener('click', () => {
+      const copy = founderToggle.closest('.founder-copy');
+      const open = copy.classList.toggle('open');
+      founderToggle.setAttribute('aria-expanded', String(open));
+      $('.ft-label', founderToggle).textContent = open ? 'Show Less' : 'Read Her Story';
+    });
+  }
 
   /* ── Team: expandable bios ─────────────────────────────── */
   $$('.team-toggle').forEach((btn) => {

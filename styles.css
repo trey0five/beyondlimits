@@ -690,16 +690,46 @@ p { max-width: 65ch; }
   padding: 0 0.08em;
 }
 
+/* the long half of the bio collapses on mobile so the grove, meadow,
+   and sun stay on screen; on desktop it is always fully visible */
+.founder-more { display: block; }
+.founder-toggle { display: none; }
 @media (max-width: 960px) {
-  .founder-grid { grid-template-columns: 1fr; padding-bottom: clamp(6.5rem, 16vw, 8rem); }
+  .founder-grid {
+    grid-template-columns: 1fr;
+    /* sky room above the portrait so the sun has somewhere to shine */
+    padding-top: clamp(6.5rem, 24vw, 8.5rem);
+    padding-bottom: clamp(6.5rem, 16vw, 8rem);
+  }
   .founder-visual { margin-bottom: 1.6rem; }
   .founder-copy { text-align: left; }
+  .fs-sun { width: clamp(104px, 26vw, 130px); top: 16px; left: 16px; }
   .fs-tree { opacity: 0.55; }
   .fs-tree:nth-of-type(3) { display: none; }
+  .founder-more {
+    display: grid; grid-template-rows: 0fr;
+    transition: grid-template-rows 0.7s cubic-bezier(0.22, 0.9, 0.3, 1);
+  }
+  .fm-inner { overflow: hidden; }
+  .founder-copy.open .founder-more { grid-template-rows: 1fr; }
+  .founder-toggle {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    justify-self: start;
+    margin-top: 0.2rem;
+    font-family: var(--font-body); font-weight: 700; font-size: 0.88rem;
+    color: var(--gold-lo);
+    background: var(--cream); border: 1.5px solid var(--tan-300); border-radius: 99px;
+    padding: 0.5rem 1.3rem; cursor: pointer;
+    box-shadow: 0 8px 20px -8px rgba(74, 59, 40, 0.4);
+    transition: border-color 0.25s ease, transform 0.25s ease;
+  }
+  .founder-toggle:hover { border-color: var(--gold); transform: translateY(-2px); }
+  .founder-toggle i { font-style: normal; transition: transform 0.5s cubic-bezier(0.34, 1.4, 0.44, 1); }
+  .founder-copy.open .founder-toggle i { transform: rotate(225deg); }
 }
 @media (max-width: 620px) {
-  .fs-meadow { height: 70px; }
-  .fs-tree { height: calc(var(--th, 200px) * 0.62); }
+  .fs-meadow { height: 88px; }
+  .fs-tree { height: calc(var(--th, 200px) * 0.72); }
   .founder-photo { width: min(250px, 74vw); }
   .founder-quote p { font-size: 1.18rem; }
 }
@@ -975,8 +1005,21 @@ p { max-width: 65ch; }
 .tb-points li { position: relative; padding-left: 1.5rem; font-size: 0.9rem; font-weight: 600; color: var(--sage-800); }
 .tb-points li::before { content: "✦"; position: absolute; left: 0; color: var(--gold); font-size: 0.75rem; top: 0.15rem; }
 
+/* mobile: the team becomes a swipeable carousel with edge peek */
 @media (max-width: 860px) {
-  .team-grid { grid-template-columns: 1fr; max-width: 34rem; }
+  .team-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    align-items: flex-start;
+    gap: 1rem;
+    max-width: none;
+    margin: 0 calc(-1 * clamp(1.2rem, 4vw, 3rem));
+    padding: 0.5rem clamp(1.2rem, 4vw, 3rem) 1.5rem;
+    scrollbar-width: none;
+  }
+  .team-grid::-webkit-scrollbar { display: none; }
+  .team-card { flex: 0 0 84%; max-width: 24rem; scroll-snap-align: center; }
 }
 @media (max-width: 620px) {
   .team-card { padding: 1.7rem 1.2rem 1.5rem; }
