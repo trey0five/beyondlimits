@@ -1438,33 +1438,23 @@ p { max-width: 65ch; }
 .bk-dots button { width: 10px; height: 10px; border-radius: 50%; border: none; cursor: pointer; background: rgba(232, 199, 106, 0.3); transition: 0.3s; }
 .bk-dots button.on { background: var(--gold-hi); transform: scale(1.35); }
 .bk-hint { text-align: center; font-family: var(--font-display); font-style: italic; color: var(--sage-200); font-size: 0.92rem; margin: 0.9rem auto 0; }
-/* phones: the album unbinds into a vertical stack of pages in
-   natural reading order — no 3D, no page math */
+/* phones: the same opening, page-turning book — just a taller,
+   slimmer journal shape so content fits half-width pages */
 @media (max-width: 760px) {
-  .book-scene { perspective: none; width: min(430px, 94vw); }
-  .book { aspect-ratio: auto; display: grid; gap: 16px; transform: none !important; }
-  .page-base, .sheet { position: static; width: 100%; transform: none !important; transform-style: flat; cursor: default; }
-  .page-base { opacity: 1 !important; } /* the stacked layout never "opens", so never hide the end page */
-  .sheet[data-sheet="0"] { order: 1; }
-  .sheet[data-sheet="1"] { order: 2; }
-  .sheet[data-sheet="2"] { order: 3; }
-  .sheet[data-sheet="3"] { order: 4; }
-  .page-base.right { order: 5; }
-  .page-base.left { display: none; }
-  .sheet { display: grid; gap: 16px; }
-  .face { position: static; transform: none; backface-visibility: visible; -webkit-backface-visibility: visible; border-radius: 14px !important; box-shadow: 0 20px 40px -18px rgba(0, 0, 0, 0.5); }
-  .face.back { transform: none; } /* un-mirror the left-hand pages */
-  .face::after, .pg-final::after { display: none; }
-  .sheet .pg, .page-base .pg-final { padding: 9%; }
-  .sheet.cover .face.front { padding: 10% 9%; }
-  .pg-photo { grid-template-rows: none; }
-  .pg-frame { aspect-ratio: 4 / 3.4; }
-  .pg-quote { margin: 6% 0 !important; }
-  .pg-final { min-height: 240px; }
-  .page-base.right::after { display: none; }
-  .bk-arrow, .bk-dots { display: none; }
-  .bk-hint { display: none; }
-  .cover-hint { display: none; }
+  .book-scene { width: min(430px, 96vw); }
+  .book { aspect-ratio: 10 / 12; }
+  .bk-arrow { width: 38px; height: 38px; font-size: 0.95rem; }
+  .bk-arrow.prev { left: -8px; }
+  .bk-arrow.next { right: -8px; }
+  .cover-frame { width: 66%; }
+  .cover-script { font-size: 1.3rem; }
+  .cover-sub { font-size: 0.48rem; }
+  .sheet .pg, .page-base .pg-final { padding: 9% 8%; }
+  .pg-polaroids { grid-template-columns: 1fr; gap: 4%; padding: 7% 14% !important; }
+  .polaroid:nth-child(3) { grid-column: auto; width: 100%; }
+  .pg-quote { margin-top: 30% !important; }
+  .pg-final p { max-width: 20ch; }
+  .bk-hint { font-size: 0.8rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .book-scene { opacity: 1; transform: none; }

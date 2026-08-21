@@ -368,6 +368,28 @@
       clearInterval(tgTimer);
       if (!reduceMotion) tgTimer = setInterval(tgNext, 3000);
     };
+    // re-bloom: when a card slides out of the carousel view, silently
+    // reset its flowers so they burst open again on the next pass
+    const rebloomIO = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!tgMobile()) continue;
+          const card = e.target;
+          if (e.isIntersecting) {
+            if (!card.classList.contains('in')) {
+              requestAnimationFrame(() => card.classList.add('in'));
+            }
+          } else if (card.classList.contains('in') && !card.classList.contains('open')) {
+            card.classList.add('noanim');
+            card.classList.remove('in');
+            void card.offsetWidth; // flush so the reset lands before re-entering
+            card.classList.remove('noanim');
+          }
+        }
+      },
+      { threshold: 0.5 }
+    );
+    teamCards.forEach((c) => rebloomIO.observe(c));
     teamGrid.addEventListener('touchstart', () => { tgHold = true; }, { passive: true });
     teamGrid.addEventListener('touchend', () => { tgHold = false; tgStart(); }, { passive: true });
     teamGrid.addEventListener('touchcancel', () => { tgHold = false; tgStart(); }, { passive: true });
@@ -598,7 +620,6 @@
     let bkBusy = false;
     let bkInView = false;
     let bkTimer;
-    const bkMobile = () => matchMedia('(max-width: 760px)').matches;
 
     for (let i = 0; i <= BN; i++) {
       const b = document.createElement('button');
@@ -622,7 +643,7 @@
     const bkAdvance = () => (bkStep >= BN ? 0 : bkStep + 1);
     const bkAuto = () => {
       clearInterval(bkTimer);
-      if (reduceMotion || bkMobile()) return;
+      if (reduceMotion) return;
       bkTimer = setInterval(() => {
         if (!bkInView || bkBusy) return;
         bkGo(bkAdvance());
@@ -630,7 +651,7 @@
     };
     const bkGo = (n, manual) => {
       n = Math.max(0, Math.min(BN, n));
-      if (n === bkStep || bkBusy || bkMobile()) return;
+      if (n === bkStep || bkBusy) return;
       if (manual) bkAuto();
       // sheets in flight ride above both stacks; a multi-sheet jump
       // (like closing the whole album) riffles them, and a sheet that
@@ -660,7 +681,7 @@
     bkNext.addEventListener('click', () => bkGo(bkAdvance(), true));
     // tapping a right-hand page turns forward, a left-hand page back
     book.addEventListener('click', (e) => {
-      if (e.target.closest('[data-consult]') || bkMobile()) return;
+      if (e.target.closest('[data-consult]')) return;
       const face = e.target.closest('.face');
       if (!face) return;
       bkGo(bkStep + (face.classList.contains('back') ? -1 : 1), true);
