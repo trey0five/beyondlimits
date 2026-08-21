@@ -1020,14 +1020,19 @@ p { max-width: 65ch; }
   }
   .team-grid::-webkit-scrollbar { display: none; }
   .team-card { flex: 0 0 84%; max-width: 24rem; scroll-snap-align: center; }
+  /* garden stems: pinned to the bottom corners, leaning out and
+     poking below the card so they're actually visible on phones */
+  .team-grid { padding-bottom: 4.4rem; }
+  .team-card > .tf-garden { inset: 0; }
+  .team-card > .tf-garden .tf-stem { height: 165px; bottom: -32px; }
+  .team-card > .tf-garden .tf-stem:nth-child(1) { left: -1%; right: auto; transform: rotate(-30deg) scale(0); }
+  .team-card > .tf-garden .tf-stem:nth-child(2) { left: auto; right: -1%; transform: rotate(28deg) scale(0); }
+  .team-card.in > .tf-garden .tf-stem:nth-child(1) { transform: rotate(-30deg) scale(1); }
+  .team-card.in > .tf-garden .tf-stem:nth-child(2) { transform: rotate(28deg) scale(1); }
 }
 @media (max-width: 620px) {
   .team-card { padding: 1.7rem 1.2rem 1.5rem; }
   .tb-points { grid-template-columns: 1fr; }
-  /* narrow screens: tuck the garden inward so stems aren't clipped
-     at the viewport edge */
-  .team-card > .tf-garden { inset: 0 7%; }
-  .tf-stem { height: calc(var(--sh, 230px) * 0.78); }
 }
 @media (prefers-reduced-motion: reduce) {
   .tf-photo, .tf-mega, .tg-line, .team-garland img { transform: none; }

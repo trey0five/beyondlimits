@@ -347,6 +347,48 @@
     );
     fIO.observe(founderStage);
   }
+  /* team carousel: auto-advances every 3s on mobile, pauses while
+     touching, and never yanks a card whose bio is open */
+  const teamGrid = $('.team-grid');
+  if (teamGrid) {
+    const teamCards = $$('.team-card', teamGrid);
+    const tgMobile = () => matchMedia('(max-width: 860px)').matches;
+    let tgIdx = 0;
+    let tgTimer;
+    let tgHold = false;
+    const tgCenter = (el) =>
+      el.offsetLeft - teamGrid.offsetLeft - (teamGrid.clientWidth - el.clientWidth) / 2;
+    const tgNext = () => {
+      if (!tgMobile() || tgHold) return;
+      if (teamCards.some((c) => c.classList.contains('open'))) return;
+      tgIdx = (tgIdx + 1) % teamCards.length;
+      teamGrid.scrollTo({ left: tgCenter(teamCards[tgIdx]), behavior: 'smooth' });
+    };
+    const tgStart = () => {
+      clearInterval(tgTimer);
+      if (!reduceMotion) tgTimer = setInterval(tgNext, 3000);
+    };
+    teamGrid.addEventListener('touchstart', () => { tgHold = true; }, { passive: true });
+    teamGrid.addEventListener('touchend', () => { tgHold = false; tgStart(); }, { passive: true });
+    teamGrid.addEventListener('touchcancel', () => { tgHold = false; tgStart(); }, { passive: true });
+    // after a manual swipe, continue from wherever the user landed
+    let tgScrollT;
+    teamGrid.addEventListener('scroll', () => {
+      clearTimeout(tgScrollT);
+      tgScrollT = setTimeout(() => {
+        const center = teamGrid.scrollLeft + teamGrid.clientWidth / 2;
+        let best = 0;
+        let bd = Infinity;
+        teamCards.forEach((el, i) => {
+          const d = Math.abs(el.offsetLeft - teamGrid.offsetLeft + el.clientWidth / 2 - center);
+          if (d < bd) { bd = d; best = i; }
+        });
+        tgIdx = best;
+      }, 120);
+    }, { passive: true });
+    tgStart();
+  }
+
   /* mobile-only "Read Her Story" expander in the founder bio */
   const founderToggle = $('#founderToggle');
   if (founderToggle) {
@@ -631,7 +673,10 @@
       if (Math.abs(dx) > 45) bkGo(bkStep + (dx < 0 ? 1 : -1), true);
       bkX = null;
     }, { passive: true });
-    // entrance: the closed album rises in, opens itself, then keeps turning
+    // entrance: the closed album rises in, opens itself, then keeps
+    // turning. Top-edge trigger, not a height ratio — on mobile the
+    // stacked pages are taller than any viewport, so a ratio
+    // threshold would never fire and the book would stay hidden.
     const bkIO = new IntersectionObserver(
       (entries) => {
         bkInView = entries.some((e) => e.isIntersecting);
@@ -643,7 +688,7 @@
           }, reduceMotion ? 0 : 1400);
         }
       },
-      { threshold: 0.35 }
+      { threshold: 0, rootMargin: '0px 0px -30% 0px' }
     );
     bkIO.observe(bookScene);
   }
