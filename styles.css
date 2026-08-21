@@ -455,12 +455,58 @@ p { max-width: 65ch; }
 .stat strong { display: block; font-family: var(--font-display); font-size: 2rem; color: var(--sage-800); font-variant-numeric: tabular-nums; }
 .stat span { font-size: 0.82rem; color: var(--muted); line-height: 1.4; display: block; }
 
-.photo-stack { position: relative; padding: 0 0 5rem 0; }
-.photo-stack img { border-radius: var(--radius); box-shadow: var(--shadow); }
-.stack-a { width: 76%; margin-left: auto; }
-.stack-b { position: absolute; width: 46%; left: 0; bottom: 0; border: 6px solid var(--cream); }
+/* two photos that trade places on a timer: each occupies a "slot",
+   and swapping the slot classes flies them across the stack */
+.photo-stack { position: relative; aspect-ratio: 100 / 82; }
+.stack-img {
+  position: absolute;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 0 solid var(--cream);
+  transition:
+    left 1.1s cubic-bezier(0.34, 1.15, 0.44, 1),
+    top 1.1s cubic-bezier(0.34, 1.15, 0.44, 1),
+    width 1.1s cubic-bezier(0.34, 1.15, 0.44, 1),
+    border-width 1.1s ease;
+}
+.stack-img.pos-big { left: 24%; top: 0; width: 76%; z-index: 1; }
+.stack-img.pos-small { left: 0; top: 58%; width: 46%; border-width: 6px; z-index: 2; }
+/* mid-flight: the image headed for the big slot rides on top, and
+   both lift, tilt, and brighten as they cross */
+.photo-stack.swapping .pos-big { z-index: 3; }
+.photo-stack.swapping .stack-img { animation: swapLift 1.1s cubic-bezier(0.4, 0.1, 0.3, 1); }
+@keyframes swapLift {
+  45% { transform: scale(1.07) rotate(-2.5deg); filter: brightness(1.07); }
+}
+/* gold glint + sparks that flash during each swap */
+.ps-sheen {
+  position: absolute; top: -8%; bottom: -8%; left: -30%; width: 32%;
+  transform: skewX(-18deg) translateX(-160%);
+  background: linear-gradient(90deg, transparent, rgba(255, 251, 233, 0.65) 50%, transparent);
+  filter: blur(2px);
+  pointer-events: none;
+  z-index: 4;
+}
+.photo-stack.swapping .ps-sheen { animation: fsSheen 0.9s 0.25s cubic-bezier(0.6, 0, 0.3, 1); }
+.ps-spark {
+  position: absolute; left: var(--sx, 50%); top: var(--sy, 50%);
+  color: var(--gold);
+  font-size: 17px;
+  text-shadow: 0 0 12px rgba(232, 199, 106, 0.9);
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+  z-index: 4;
+}
+.photo-stack.swapping .ps-spark { animation: psSpark 0.7s var(--spd, 0s) cubic-bezier(0.34, 1.4, 0.44, 1); }
+@keyframes psSpark {
+  30% { opacity: 1; transform: scale(1.2) rotate(40deg); }
+  100% { opacity: 0; transform: scale(0.3) rotate(80deg); }
+}
 .stack-badge {
-  position: absolute; right: -6px; bottom: 16%;
+  position: absolute; right: -6px; bottom: 16%; z-index: 5;
   background: var(--white); border: 1px solid var(--tan-300);
   border-radius: 16px; padding: 0.8rem 1.2rem;
   font-family: var(--font-display); font-style: italic; font-size: 1.05rem;
@@ -469,6 +515,484 @@ p { max-width: 65ch; }
 }
 .stack-badge span { display: block; }
 @keyframes floatBadge { 50% { transform: translateY(-10px); } }
+
+/* ── Meet the founder ────────────────────────────────────── */
+.founder-wrap { margin-top: clamp(4rem, 8vw, 7rem); }
+.founder-head { margin-bottom: clamp(2rem, 4vw, 3rem); }
+.founder-stage {
+  position: relative;
+  border-radius: calc(var(--radius) + 8px);
+  border: 1px solid var(--sage-200);
+  overflow: hidden;
+  /* revealed by its own observer (deep in view) — not the generic one */
+  opacity: 0;
+  transform: translateY(46px);
+  transition: opacity 1.1s ease, transform 1.1s cubic-bezier(0.22, 0.9, 0.3, 1);
+  background:
+    radial-gradient(900px 320px at 20% -10%, var(--tan-100), transparent 60%),
+    radial-gradient(700px 340px at 90% 110%, var(--sage-100), transparent 55%),
+    linear-gradient(180deg, var(--white) 0%, var(--cream) 55%, var(--sage-100) 100%);
+  box-shadow: var(--shadow);
+}
+.founder-stage.in { opacity: 1; transform: none; }
+.fs-glow {
+  position: absolute; width: 480px; height: 480px; border-radius: 50%;
+  top: -200px; right: -120px; pointer-events: none;
+  background: radial-gradient(circle, rgba(232, 199, 106, 0.22), transparent 65%);
+  animation: glowDrift 9s ease-in-out infinite alternate;
+}
+/* the sun: drops in from above the panel, then turns ever so slowly */
+.fs-sun {
+  position: absolute; top: 4.5%; left: 3.5%;
+  width: clamp(90px, 11vw, 150px);
+  transform: translateY(-380%) rotate(-150deg);
+  transition: transform 2.6s cubic-bezier(0.34, 1.18, 0.44, 1) 1.3s;
+  filter: drop-shadow(0 0 28px rgba(232, 199, 106, 0.8));
+  pointer-events: none;
+}
+.founder-stage.in .fs-sun { transform: none; }
+.fs-sun img { width: 100%; animation: fbSpin 150s linear infinite; }
+
+/* the grove: trees pop up from the ground when the stage scrolls in */
+.fs-trees { position: absolute; inset: auto 0 4px 0; pointer-events: none; }
+.fs-tree {
+  position: absolute; bottom: 0; left: var(--x, 50%);
+  height: var(--th, 200px); width: auto;
+  opacity: var(--op, 0.9);
+  transform: scale(0);
+  transform-origin: bottom center;
+  transition: transform 2.8s cubic-bezier(0.3, 1.08, 0.42, 1) var(--d, 0s);
+}
+.fs-tree.flip { scale: -1 1; }
+.founder-stage.in .fs-tree { transform: scale(1); }
+/* grass strip rising into place */
+.fs-meadow {
+  position: absolute; left: -1%; right: -1%; bottom: -2px; height: 170px;
+  background: url("assets/img/meadow2-lush.png") repeat-x bottom center / auto 100%;
+  pointer-events: none;
+  transform: translateY(103%);
+  transition: transform 3.2s cubic-bezier(0.22, 0.9, 0.3, 1) 0.9s;
+}
+/* second, mirrored grass layer breaks up the tile repetition */
+.fs-meadow::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: inherit;
+  background-position: 37% bottom;
+  transform: scaleX(-1);
+}
+.founder-stage.in .fs-meadow { transform: none; }
+/* one-time ray of gold light sweeping across the stage */
+.fs-sheen {
+  position: absolute; top: -20%; bottom: -20%; left: -45%; width: 45%;
+  transform: skewX(-18deg) translateX(-140%);
+  background: linear-gradient(90deg, transparent, rgba(244, 223, 154, 0.35) 38%, rgba(255, 251, 233, 0.8) 50%, rgba(244, 223, 154, 0.35) 62%, transparent);
+  filter: blur(2px);
+  pointer-events: none;
+  z-index: 4;
+}
+.founder-stage.in .fs-sheen { animation: fsSheen 1.4s 5.8s cubic-bezier(0.6, 0, 0.3, 1) forwards; }
+@keyframes fsSheen { to { transform: skewX(-18deg) translateX(560%); } }
+.founder-stage .tf-spark { z-index: 5; }
+
+.founder-grid {
+  position: relative; z-index: 3;
+  display: grid; grid-template-columns: 0.8fr 1.2fr;
+  gap: clamp(1.8rem, 4vw, 3.5rem);
+  align-items: center;
+  padding: clamp(2.2rem, 4.5vw, 3.5rem) clamp(1.4rem, 4vw, 3.2rem) clamp(8rem, 13vw, 12rem);
+}
+/* arched portrait that grows up out of the meadow */
+.founder-visual { position: relative; justify-self: center; }
+.founder-photo {
+  position: relative;
+  width: min(300px, 72vw);
+  aspect-ratio: 3 / 3.55;
+  border-radius: 999px 999px 30px 30px;
+  padding: 7px;
+  background: var(--grad-gold); background-size: 200% auto;
+  animation: shimmer 4.5s linear infinite;
+  box-shadow: 0 26px 54px -18px rgba(74, 59, 40, 0.5), 0 0 0 8px rgba(255, 253, 248, 0.85);
+  overflow: hidden;
+  transform: scale(0.4) translateY(70px);
+  transform-origin: bottom center;
+  /* the headshot leads the entrance — no delay */
+  transition: transform 1s cubic-bezier(0.32, 1.15, 0.42, 1);
+}
+.founder-stage.in .founder-photo { transform: none; }
+.founder-photo img {
+  width: 100%; height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: 50% 30%;
+}
+/* gold glint sweeping over the portrait once it has grown in */
+.founder-photo::after {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 251, 233, 0.75) 50%, transparent 60%);
+  background-size: 260% 100%;
+  background-position: 165% 0;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+.founder-stage.in .founder-photo::after { animation: fpGlint 0.9s 1.1s ease-in-out forwards; }
+@keyframes fpGlint { to { background-position: -65% 0; } }
+.founder-badge {
+  position: absolute; left: 50%; bottom: -26px;
+  translate: -50% 0;
+  white-space: nowrap;
+  background: var(--white); border: 1px solid var(--tan-300);
+  border-radius: 16px; padding: 0.55rem 1.2rem;
+  font-family: var(--font-display); font-style: italic; font-size: 1rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+  animation: floatBadge 4s ease-in-out infinite;
+}
+.founder-badge span { display: block; line-height: 1.35; }
+
+/* the bio leads with the headshot — quick stagger, no waiting on the grove */
+.founder-copy > * {
+  opacity: 0; transform: translateY(26px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+.founder-stage.in .founder-copy > * { opacity: 1; transform: none; }
+.founder-stage.in .founder-copy > *:nth-child(2) { transition-delay: 0.08s; }
+.founder-stage.in .founder-copy > *:nth-child(3) { transition-delay: 0.16s; }
+.founder-stage.in .founder-copy > *:nth-child(4) { transition-delay: 0.24s; }
+.founder-stage.in .founder-copy > *:nth-child(5) { transition-delay: 0.32s; }
+.founder-stage.in .founder-copy > *:nth-child(6) { transition-delay: 0.4s; }
+.founder-name { font-size: clamp(2rem, 3.6vw, 2.7rem); margin: 0 0 0.2rem; }
+.founder-role { font-family: var(--font-display); font-style: italic; color: var(--sage-600); font-size: 1.05rem; margin: 0 0 1.1rem; }
+.founder-copy p:not(.founder-role) { font-size: 0.98rem; margin: 0 0 0.95rem; }
+.founder-quote {
+  position: relative;
+  margin: 1.3rem 0 1.3rem;
+  padding: 0.4rem 0 0.4rem 1.4rem;
+  border-left: 3px solid;
+  border-image: linear-gradient(180deg, var(--gold-hi), var(--gold-lo)) 1;
+}
+.founder-quote p {
+  font-family: "Cormorant Garamond", var(--font-display);
+  font-style: italic;
+  font-size: 1.32rem; line-height: 1.45;
+  color: var(--sage-800);
+  margin: 0 !important;
+}
+.founder-quote::before {
+  content: "“";
+  position: absolute; left: -0.62em; top: -0.55em;
+  font-family: var(--font-display);
+  font-size: 3.4rem; line-height: 1;
+  color: var(--gold);
+  background: var(--cream);
+  padding: 0 0.08em;
+}
+
+@media (max-width: 960px) {
+  .founder-grid { grid-template-columns: 1fr; padding-bottom: clamp(6.5rem, 16vw, 8rem); }
+  .founder-visual { margin-bottom: 1.6rem; }
+  .founder-copy { text-align: left; }
+  .fs-tree { opacity: 0.55; }
+  .fs-tree:nth-of-type(3) { display: none; }
+}
+@media (max-width: 620px) {
+  .fs-meadow { height: 70px; }
+  .fs-tree { height: calc(var(--th, 200px) * 0.62); }
+  .founder-photo { width: min(250px, 74vw); }
+  .founder-quote p { font-size: 1.18rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .founder-stage { opacity: 1; transform: none; }
+  .fs-tree, .founder-photo, .fs-meadow, .fs-sun { transform: none; }
+  .founder-copy > * { opacity: 1; transform: none; }
+}
+
+/* ── Meet our team ───────────────────────────────────────── */
+.team-wrap { margin-top: clamp(4rem, 8vw, 7rem); }
+.team-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(1.6rem, 3.5vw, 2.8rem);
+  max-width: 62rem; margin: 0 auto;
+  align-items: start;
+}
+.team-card {
+  position: relative;
+  padding: 2.2rem 1.8rem 1.9rem;
+  text-align: center;
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+/* the card surface lives on ::before so the garden stems can hide
+   behind it and lean out past its edges */
+.team-card::before {
+  content: "";
+  position: absolute; inset: 0; z-index: 0;
+  background: var(--white);
+  border: 1px solid var(--sage-200);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 44px -26px rgba(74, 59, 40, 0.35);
+  transition: box-shadow 0.4s ease;
+}
+.team-card:hover::before { box-shadow: 0 34px 64px -28px rgba(74, 59, 40, 0.45); }
+/* content sits above the card surface — and above the flower crown,
+   so blooms never cover a teacher's name */
+.team-card > * { position: relative; z-index: 2; }
+
+/* gold-and-flower garland under the section heading */
+.team-garland {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.9rem;
+  margin-top: 1.6rem;
+}
+.tg-line {
+  width: clamp(50px, 10vw, 110px); height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-hi), var(--gold));
+  transform: scaleX(0); transform-origin: right;
+  transition: transform 0.9s cubic-bezier(0.22, 0.9, 0.3, 1) 0.25s;
+}
+.tg-line.rev { background: linear-gradient(270deg, transparent, var(--gold-hi), var(--gold)); transform-origin: left; }
+.team-garland img {
+  transform: scale(0) rotate(-120deg);
+  transition: transform 0.8s cubic-bezier(0.34, 1.5, 0.44, 1) calc(0.35s + var(--gi, 0) * 0.12s);
+  filter: drop-shadow(0 5px 10px rgba(74, 59, 40, 0.25));
+  animation: fbSpin 40s linear infinite;
+}
+.team-garland.in .tg-line { transform: scaleX(1); }
+.team-garland.in img { transform: scale(1) rotate(0deg); }
+
+/* flower-wreath portrait frame — --bf drives every radius inside */
+.bloom-frame {
+  --bf: min(320px, 72vw);
+  position: relative;
+  width: var(--bf); aspect-ratio: 1;
+  margin: 0 auto 1.3rem;
+}
+/* garden stems: planted behind the card, leaning out past its
+   bottom corners and growing up when the card reveals */
+.team-card > .tf-garden { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.tf-stem {
+  position: absolute; bottom: var(--sb, 10px); left: var(--x, 50%);
+  height: var(--sh, 230px); width: auto;
+  transform-origin: bottom center;
+  transform: rotate(var(--rot, 0deg)) scale(0);
+  transition: transform 1.7s cubic-bezier(0.3, 1.18, 0.44, 1) calc(var(--gd, 0s) + 0.4s);
+  filter: drop-shadow(0 8px 14px rgba(74, 59, 40, 0.2));
+}
+.tf-stem.flip { scale: -1 1; }
+.team-card.in .tf-stem { transform: rotate(var(--rot, 0deg)) scale(1); }
+.team-card:hover .tf-stem {
+  transform: rotate(calc(var(--rot, 0deg) * 1.3)) scale(1.04);
+  transition-delay: 0s; transition-duration: 0.6s;
+}
+/* one-time ring of gold light bursting from the portrait */
+.tf-burst {
+  position: absolute; left: 50%; top: 50%;
+  width: 30px; height: 30px; margin: -15px 0 0 -15px;
+  border: 3px solid var(--gold-hi);
+  border-radius: 50%;
+  box-shadow: 0 0 24px rgba(232, 199, 106, 0.7), inset 0 0 12px rgba(232, 199, 106, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+.team-card.in .tf-burst { animation: tfBurst 1.1s 0.6s cubic-bezier(0.22, 0.9, 0.3, 1) forwards; }
+@keyframes tfBurst {
+  0% { transform: scale(0); opacity: 0.95; }
+  100% { transform: scale(11); opacity: 0; }
+}
+/* soft spinning gold-and-sage glow behind the portrait */
+.tf-halo {
+  position: absolute; inset: 11%;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg,
+    var(--gold-hi), var(--tan-300), var(--gold), var(--sage-400),
+    var(--gold-hi), var(--tan-500), var(--gold-hi));
+  filter: blur(12px);
+  opacity: 0.55;
+  animation: fbSpin 9s linear infinite;
+}
+/* the giant bloom: unfurls behind the portrait, then turns forever */
+.tf-mega {
+  position: absolute; inset: 6%;
+  display: grid; place-items: center;
+  transform: scale(0) rotate(-240deg);
+  transition: transform 1.6s cubic-bezier(0.34, 1.2, 0.44, 1) 0.2s;
+}
+.team-card.in .tf-mega { transform: none; }
+.tf-mega img {
+  width: 100%;
+  animation: fbSpin 55s linear infinite;
+  filter: drop-shadow(0 16px 30px rgba(74, 59, 40, 0.3));
+}
+.tf-mega.rev img { animation-direction: reverse; }
+.bloom-frame:hover .tf-mega img { animation-duration: 12s; }
+
+/* the flower firework: blooms shoot out radially from behind the
+   portrait and settle into a two-depth crown */
+.bloom-frame { --fr: calc(var(--bf) / 2); }
+/* the crown sways gently instead of fully rotating, so the tucked
+   bottom blooms stay clear of the name below */
+.tf-crown { position: absolute; inset: 0; animation: crownSway 12s ease-in-out infinite alternate; }
+.tf-crown.rev { animation-delay: -6s; }
+@keyframes crownSway { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } }
+.tc-arm { position: absolute; inset: 0; transform: rotate(var(--a, 0deg)); }
+.tc-arm img {
+  position: absolute; left: 50%; top: 50%;
+  width: var(--cs, 48px);
+  translate: -50% -50%;
+  transform: translateY(0) scale(0) rotate(-200deg);
+  transition: transform 1.15s cubic-bezier(0.3, 1.4, 0.44, 1) calc(var(--cd, 0s) + 0.75s);
+  filter: drop-shadow(0 6px 12px rgba(74, 59, 40, 0.25));
+}
+.team-card.in .tc-arm img { transform: translateY(calc(var(--fr) * var(--rm, 1) * -1)) scale(1) rotate(0deg); }
+.bloom-frame:hover .tc-arm img {
+  transform: translateY(calc(var(--fr) * var(--rm, 1) * -1.1)) scale(1.14) rotate(0deg);
+  transition-delay: 0s; transition-duration: 0.5s;
+}
+
+/* gentle rain of tiny blossoms drifting down the frame */
+.tf-petals { position: absolute; inset: 0; pointer-events: none; z-index: 6; }
+.tf-petals img {
+  position: absolute; left: var(--px, 50%); top: -8%;
+  width: var(--pw, 16px);
+  opacity: 0;
+}
+.team-card.in .tf-petals img { animation: petalFall var(--pdur, 8s) linear var(--pdel, 0s) infinite; }
+@keyframes petalFall {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 0.9; }
+  30%  { transform: translate(14px, calc(var(--fr) * 0.62)) rotate(120deg); }
+  60%  { transform: translate(-10px, calc(var(--fr) * 1.35)) rotate(260deg); opacity: 0.85; }
+  90%  { opacity: 0.5; }
+  100% { transform: translate(10px, calc(var(--fr) * 2.2)) rotate(400deg); opacity: 0; }
+}
+/* portrait in a shimmering gold ring */
+.tf-photo {
+  position: absolute; inset: 17%;
+  border-radius: 50%;
+  padding: 6px;
+  background: var(--grad-gold); background-size: 200% auto;
+  animation: shimmer 4.5s linear infinite;
+  box-shadow: 0 18px 40px -14px rgba(74, 59, 40, 0.45), 0 0 0 7px rgba(255, 253, 248, 0.9);
+  transform: scale(0);
+  transition: transform 0.9s cubic-bezier(0.34, 1.3, 0.44, 1) 0.15s;
+}
+.team-card.in .tf-photo { transform: scale(1); }
+.bloom-frame:hover .tf-photo { transform: scale(1.04); transition-delay: 0s; }
+.tf-photo img {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+/* twinkling gold sparks around the wreath */
+.tf-spark {
+  position: absolute; left: var(--sx, 50%); top: var(--sy, 50%);
+  color: var(--gold);
+  font-size: 15px;
+  text-shadow: 0 0 12px rgba(232, 199, 106, 0.9);
+  opacity: 0;
+  animation: tfTwinkle 2.6s ease-in-out var(--sd, 0s) infinite;
+  pointer-events: none;
+}
+@keyframes tfTwinkle {
+  0%, 100% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.15) rotate(40deg); }
+}
+
+.team-name { font-size: 1.7rem; margin: 0 0 0.15rem; }
+.team-role { font-family: var(--font-display); font-style: italic; color: var(--sage-600); font-size: 1.02rem; margin: 0 auto 0.8rem; }
+.team-langs { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.2rem; }
+.team-langs span {
+  font-size: 0.76rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--sage-800);
+  background: var(--sage-100); border: 1px solid var(--sage-200);
+  border-radius: 99px; padding: 0.28rem 0.85rem;
+}
+.team-toggle {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: var(--font-body); font-weight: 700; font-size: 0.95rem;
+  color: #fffbe9;
+  background: linear-gradient(120deg, var(--gold-lo), var(--gold) 40%, var(--gold-hi) 75%, var(--gold));
+  background-size: 220% auto;
+  border: none; border-radius: 99px; cursor: pointer;
+  padding: 0.7rem 1.6rem;
+  box-shadow: 0 12px 28px -10px rgba(185, 138, 47, 0.55);
+  transition: transform 0.25s cubic-bezier(0.34, 1.4, 0.44, 1), box-shadow 0.25s ease;
+}
+.team-toggle:hover { transform: translateY(-3px) scale(1.02); background-position: right center; box-shadow: 0 18px 36px -10px rgba(185, 138, 47, 0.65); }
+.team-toggle i { font-style: normal; transition: transform 0.5s cubic-bezier(0.34, 1.4, 0.44, 1); }
+.team-card.open .team-toggle i { transform: rotate(225deg); }
+
+/* expandable bio: petals-unfurling reveal */
+.team-bio {
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows 0.8s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+.tb-inner { overflow: hidden; text-align: left; }
+.team-card.open .team-bio { grid-template-rows: 1fr; }
+.tb-rule {
+  display: block; height: 3px; border-radius: 3px;
+  margin: 1.5rem auto 1.2rem;
+  background: var(--grad-gold); background-size: 200% auto;
+  animation: shimmer 4s linear infinite;
+}
+.tb-inner > * {
+  opacity: 0; transform: translateY(22px);
+  transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+.team-card.open .tb-inner > * { opacity: 1; transform: none; }
+.team-card.open .tb-inner > *:nth-child(1) { transition-delay: 0.15s; }
+.team-card.open .tb-inner > *:nth-child(2) { transition-delay: 0.25s; }
+.team-card.open .tb-inner > *:nth-child(3) { transition-delay: 0.35s; }
+.team-card.open .tb-inner > *:nth-child(4) { transition-delay: 0.45s; }
+.team-card.open .tb-inner > *:nth-child(5) { transition-delay: 0.55s; }
+.team-card.open .tb-inner > *:nth-child(6) { transition-delay: 0.65s; }
+.team-card.open .tb-inner > *:nth-child(7) { transition-delay: 0.75s; }
+/* pull-quote inside an expandable bio */
+.tb-quote {
+  position: relative;
+  margin: 1.2rem 0;
+  padding: 0.3rem 0 0.3rem 1.2rem;
+  border-left: 3px solid;
+  border-image: linear-gradient(180deg, var(--gold-hi), var(--gold-lo)) 1;
+}
+.tb-quote p {
+  font-family: "Cormorant Garamond", var(--font-display);
+  font-style: italic;
+  font-size: 1.18rem; line-height: 1.5;
+  color: var(--sage-800);
+  margin: 0 !important;
+}
+.tb-rule { width: 40px; transition: width 0.7s cubic-bezier(0.22, 0.9, 0.3, 1), opacity 0.5s ease; }
+.team-card.open .tb-rule { width: 120px; }
+.tb-inner p { font-size: 0.96rem; color: var(--ink); margin: 0 0 0.9rem; }
+.tb-points {
+  list-style: none; margin: 1.1rem 0 0.2rem; padding: 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem 1.2rem;
+}
+.tb-points li { position: relative; padding-left: 1.5rem; font-size: 0.9rem; font-weight: 600; color: var(--sage-800); }
+.tb-points li::before { content: "✦"; position: absolute; left: 0; color: var(--gold); font-size: 0.75rem; top: 0.15rem; }
+
+@media (max-width: 860px) {
+  .team-grid { grid-template-columns: 1fr; max-width: 34rem; }
+}
+@media (max-width: 620px) {
+  .team-card { padding: 1.7rem 1.2rem 1.5rem; }
+  .tb-points { grid-template-columns: 1fr; }
+  /* narrow screens: tuck the garden inward so stems aren't clipped
+     at the viewport edge */
+  .team-card > .tf-garden { inset: 0 7%; }
+  .tf-stem { height: calc(var(--sh, 230px) * 0.78); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tf-photo, .tf-mega, .tg-line, .team-garland img { transform: none; }
+  .tf-stem { transform: rotate(var(--rot, 0deg)); }
+  .tc-arm img { transform: translateY(calc(var(--fr) * var(--rm, 1) * -1)); }
+  .tf-spark { opacity: 0.7; }
+  .tf-burst, .tf-petals { display: none; }
+}
 
 /* ── Approach ────────────────────────────────────────────── */
 .approach { background: linear-gradient(180deg, var(--cream) 0%, var(--sage-100) 30%, var(--sage-100) 70%, var(--cream) 100%); }
@@ -658,41 +1182,245 @@ p { max-width: 65ch; }
 }
 @keyframes glowDrift { to { transform: translate(-60px, 80px) scale(1.15); } }
 
-.micro-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
-.micro-gallery figure { margin: 0; position: relative; border-radius: var(--radius); overflow: hidden; box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.5); }
-.micro-gallery img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; transition: transform 0.8s ease; }
-.micro-gallery figure:hover img { transform: scale(1.07); }
-.micro-gallery figcaption {
-  position: absolute; left: 0; right: 0; bottom: 0;
-  padding: 1.6rem 1.2rem 0.9rem;
-  background: linear-gradient(transparent, rgba(30, 34, 18, 0.85));
-  font-family: var(--font-display); font-style: italic; font-size: 1.08rem;
+/* ── Micro School: enrollment banner ───────────────────── */
+.enroll-banner {
+  display: flex; align-items: center; justify-content: center;
+  gap: clamp(0.7rem, 2vw, 1.2rem);
+  margin: 0 auto clamp(2.2rem, 4.5vw, 3.5rem);
 }
-.micro-cols { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(2rem, 4vw, 3.5rem); align-items: start; }
-.micro-offer h3 { font-size: 1.6rem; margin: 0 0 1.2rem; color: var(--tan-300); }
-.checks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem 1.4rem; }
-.checks li { position: relative; padding-left: 1.9rem; font-size: 0.98rem; }
-.checks li::before {
-  content: "✦"; position: absolute; left: 0; top: 0;
+.eb-line {
+  width: clamp(34px, 9vw, 120px); height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-hi), var(--gold));
+}
+.eb-line.rev { background: linear-gradient(270deg, transparent, var(--gold-hi), var(--gold)); }
+.eb-bloom {
+  width: clamp(34px, 5vw, 46px);
+  animation: fbSpin 32s linear infinite;
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.4));
+}
+.eb-bloom.rev { animation-direction: reverse; }
+.eb-btn-wrap { position: relative; display: inline-grid; place-items: center; }
+.eb-ring {
+  position: absolute; inset: -7px -13px;
+  border-radius: 99px;
+  border: 2px solid rgba(232, 199, 106, 0.55);
+  animation: fbPulse 2.6s ease-out infinite;
+  pointer-events: none;
+}
+.eb-btn { position: relative; animation: shimmer 3.5s linear infinite; }
+
+/* ── Micro School photobook ────────────────────────────── */
+.book-scene {
+  position: relative;
+  width: min(840px, 90vw);
+  margin: 0 auto;
+  perspective: 2600px;
+  opacity: 0; transform: translateY(50px) scale(0.94);
+  transition: opacity 1s ease, transform 1s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+.book-scene.in { opacity: 1; transform: none; }
+.book {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  /* deliberately NOT preserve-3d: sheets flatten into this layer so
+     z-index (not 3D depth sorting) decides stacking — preserve-3d
+     made coplanar pages z-fight at the spine and flash during turns */
+  transition: transform 1.15s cubic-bezier(0.35, 0.1, 0.28, 1);
+}
+.book.closed { transform: translateX(-25%); }
+.page-base {
+  position: absolute; top: 0; bottom: 0; width: 50%;
+  z-index: 0; /* own stacking context so inner content can't rise above sheets */
+  transition: opacity 0.6s ease 0.3s;
+}
+/* a closed book shows only its front cover — boards appear as it opens */
+.book.closed .page-base { opacity: 0; transition-delay: 0s; }
+.page-base.left {
+  left: 0;
+  background: url("assets/img/album-cover.jpg") center / cover;
+  border-radius: 14px 4px 4px 14px;
+  box-shadow: 0 34px 64px -20px rgba(0, 0, 0, 0.55);
+  filter: brightness(0.9);
+}
+.page-base.right {
+  right: 0;
+  background: url("assets/img/album-paper.jpg") center / cover;
+  border-radius: 4px 12px 12px 4px;
+  box-shadow: 0 34px 64px -20px rgba(0, 0, 0, 0.55);
+}
+/* stacked page edges peeking out of the right board */
+.page-base.right::after {
+  content: ""; position: absolute; top: 5px; bottom: 5px; right: -5px; width: 5px;
+  background: repeating-linear-gradient(90deg, #ece3cd 0 1px, #cdc3a6 1px 2px);
+  border-radius: 0 3px 3px 0;
+}
+.sheet {
+  position: absolute; top: 0; bottom: 0; left: 50%; width: 50%;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  /* per-sheet perspective, since the book itself is flattened */
+  transform: perspective(2300px) rotateY(0deg);
+  transition: transform 1.15s cubic-bezier(0.35, 0.1, 0.28, 1);
+  cursor: pointer;
+}
+.sheet.turned { transform: perspective(2300px) rotateY(-180deg); }
+.face {
+  position: absolute; inset: 0;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  background: url("assets/img/album-paper.jpg") center / cover;
+  border-radius: 4px 12px 12px 4px;
+  overflow: hidden;
+}
+.face.back { transform: rotateY(180deg); border-radius: 12px 4px 4px 12px; }
+/* gutter shading toward the spine */
+.face.front::after, .page-base.right .pg-final::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(74, 59, 40, 0.2), transparent 12%);
+}
+.face.back::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(270deg, rgba(74, 59, 40, 0.2), transparent 12%);
+}
+/* the linen cover */
+.sheet.cover .face.front {
+  background: url("assets/img/album-cover.jpg") center / cover;
+  border-radius: 6px 14px 14px 6px;
+  box-shadow: 0 34px 64px -18px rgba(0, 0, 0, 0.6);
+  display: grid; place-content: center; justify-items: center;
+  gap: 0.45rem; text-align: center;
+  padding: 8%;
+}
+.cover-frame {
+  width: 56%;
+  padding: 5px;
+  background: var(--grad-gold); background-size: 200% auto;
+  animation: shimmer 5s linear infinite;
+  border-radius: 8px;
+  box-shadow: 0 14px 30px -8px rgba(0, 0, 0, 0.55);
+  margin-bottom: 0.5rem;
+}
+.cover-frame img { width: 100%; aspect-ratio: 3 / 3.6; object-fit: cover; border-radius: 5px; }
+.cover-script { font-family: var(--font-script); font-size: clamp(1.5rem, 3.4vw, 2.2rem); line-height: 1.1; color: var(--gold-hi); text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); }
+.cover-sub { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.26em; text-indent: 0.26em; text-transform: uppercase; color: var(--tan-100); }
+.cover-hint {
+  margin-top: 0.5rem;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--gold-hi);
+  animation: coverHint 2.2s ease-in-out infinite;
 }
-.micro-note { margin-top: 1.6rem; color: var(--sage-200); font-size: 0.95rem; }
-.micro-pricing { display: grid; gap: 1rem; }
-.price-card {
-  background: rgba(255, 253, 248, 0.06);
-  border: 1px solid rgba(232, 199, 106, 0.35);
-  border-radius: var(--radius);
-  padding: 1.4rem 1.6rem;
-  backdrop-filter: blur(6px);
+@keyframes coverHint { 50% { opacity: 0.35; } }
+/* page interiors */
+.pg { color: var(--ink); }
+.sheet .pg, .page-base .pg-final { padding: 8% 9%; }
+.pg-head {
+  font-family: var(--font-display); font-size: clamp(0.95rem, 1.9vw, 1.35rem);
+  color: var(--brown-700); margin: 0 0 0.7em;
 }
-.price-card.main { background: linear-gradient(135deg, rgba(232, 199, 106, 0.16), rgba(255, 253, 248, 0.04)); }
-.price-card p { margin: 0.4rem 0 0; color: var(--sage-200); font-size: 0.9rem; }
-.price-label { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--tan-300); margin-bottom: 0.3rem; }
-.price-figure { font-family: var(--font-display); font-size: 2.1rem; color: var(--cream); font-variant-numeric: tabular-nums; }
-.price-figure em { font-size: 1rem; color: var(--sage-200); font-style: italic; }
-.price-figure.sm { font-size: 1.6rem; }
-.price-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.micro-close { max-width: 52rem; margin: clamp(2.5rem, 5vw, 4rem) auto 0; text-align: center; font-family: var(--font-display); font-style: italic; font-size: 1.25rem; color: var(--sage-100); }
+.face .pg-head::after { content: ""; display: block; width: 44px; height: 2px; margin-top: 0.4em; background: var(--grad-gold); border-radius: 2px; }
+.face p { font-size: clamp(0.62rem, 1.35vw, 0.92rem); line-height: 1.6; margin: 0 0 0.8em; }
+.pg-flourish { display: block; text-align: center; color: var(--gold); letter-spacing: 0.6em; text-indent: 0.6em; margin-top: 4%; }
+.pg-checks { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(0.3rem, 0.9vw, 0.55rem); }
+.pg-checks li { position: relative; padding-left: 1.5em; font-size: clamp(0.62rem, 1.4vw, 0.9rem); font-weight: 600; color: var(--sage-800); }
+.pg-checks li::before { content: "✦"; position: absolute; left: 0; top: 0.1em; color: var(--gold); font-size: 0.8em; }
+.pg-quote {
+  font-family: "Cormorant Garamond", var(--font-display); font-style: italic;
+  font-size: clamp(0.78rem, 1.75vw, 1.18rem) !important; line-height: 1.55 !important;
+  color: var(--sage-800); text-align: center;
+  margin-top: 18% !important;
+}
+.pg-note { color: var(--muted); font-size: clamp(0.56rem, 1.2vw, 0.8rem) !important; }
+/* tuition mini-cards */
+.pg-price {
+  border: 1px solid var(--tan-300); border-radius: 10px;
+  background: rgba(255, 253, 248, 0.55);
+  padding: clamp(0.4rem, 1.4vw, 0.9rem) clamp(0.5rem, 1.6vw, 1rem);
+  margin-bottom: 0.7em;
+}
+.pg-price-label { display: block; font-size: clamp(0.5rem, 1vw, 0.66rem); font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-lo); margin-bottom: 0.15em; }
+.pg-price-figure { font-family: var(--font-display); font-size: clamp(0.95rem, 2.4vw, 1.7rem); color: var(--brown-700); }
+.pg-price-figure em { font-size: 0.55em; font-style: italic; color: var(--muted); }
+.pg-price-figure.sm { font-size: clamp(0.85rem, 1.9vw, 1.3rem); }
+.pg-price-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7em; }
+.pg-price-row .pg-price { margin-bottom: 0; }
+/* full-photo pages */
+.pg-photo { display: grid; grid-template-rows: 1fr auto; padding: 7% 8% !important; }
+.pg-frame {
+  position: relative; overflow: hidden;
+  padding: 4px; border-radius: 9px;
+  background: var(--grad-gold); background-size: 200% auto;
+  box-shadow: 0 12px 26px -10px rgba(46, 42, 32, 0.45);
+}
+.pg-frame img { position: absolute; inset: 4px; width: calc(100% - 8px); height: calc(100% - 8px); object-fit: cover; border-radius: 6px; }
+.pg-caption {
+  font-family: "Cormorant Garamond", var(--font-display); font-style: italic;
+  text-align: center; color: var(--sage-800);
+  margin: 0.7em 0 0 !important;
+}
+/* polaroid spread */
+.pg-polaroids { display: grid; grid-template-columns: 1fr 1fr; gap: 5%; align-content: center; padding: 9% 9% !important; }
+.polaroid {
+  margin: 0; background: #fffdf6;
+  padding: 4.5% 4.5% 9%;
+  box-shadow: 0 10px 22px -6px rgba(46, 42, 32, 0.4);
+  transform: rotate(var(--pr, 0deg)) translateY(var(--py, 0));
+}
+.polaroid:nth-child(3) { grid-column: 1 / -1; width: 56%; justify-self: center; }
+.polaroid img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.polaroid figcaption { font-family: "Cormorant Garamond", serif; font-style: italic; font-size: clamp(0.55rem, 1.2vw, 0.8rem); text-align: center; margin-top: 0.4em; color: var(--brown-700); }
+/* final page */
+.pg-final { position: relative; height: 100%; display: grid; place-content: center; justify-items: center; text-align: center; gap: 0.5rem; }
+.pg-logo { width: clamp(34px, 6vw, 56px); }
+.pg-final h4 { font-family: var(--font-display); font-size: clamp(1rem, 2.2vw, 1.5rem); margin: 0; color: var(--brown-700); }
+.pg-final p { font-size: clamp(0.62rem, 1.35vw, 0.9rem); color: var(--muted); margin: 0 0 0.5em; max-width: 24ch; }
+.pg-final .btn { font-size: clamp(0.62rem, 1.3vw, 0.9rem); padding: 0.55em 1.5em; position: relative; z-index: 2; }
+/* navigation */
+.bk-arrow {
+  position: absolute; top: 45%; translate: 0 -50%;
+  width: 46px; height: 46px; border-radius: 50%;
+  border: 1.5px solid rgba(232, 199, 106, 0.5); background: rgba(255, 253, 248, 0.12); color: var(--gold-hi);
+  cursor: pointer; font-size: 1.1rem; z-index: 8;
+  backdrop-filter: blur(4px);
+  transition: transform 0.25s ease, background 0.25s ease, opacity 0.3s ease;
+}
+.bk-arrow:hover { background: rgba(232, 199, 106, 0.25); transform: scale(1.1); }
+.bk-arrow:disabled { opacity: 0.25; cursor: default; transform: none; }
+.bk-arrow.prev { left: -64px; }
+.bk-arrow.next { right: -64px; }
+.bk-dots { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1.8rem; }
+.bk-dots button { width: 10px; height: 10px; border-radius: 50%; border: none; cursor: pointer; background: rgba(232, 199, 106, 0.3); transition: 0.3s; }
+.bk-dots button.on { background: var(--gold-hi); transform: scale(1.35); }
+.bk-hint { text-align: center; font-family: var(--font-display); font-style: italic; color: var(--sage-200); font-size: 0.92rem; margin: 0.9rem auto 0; }
+/* phones: the album unbinds into a vertical stack of pages in
+   natural reading order — no 3D, no page math */
+@media (max-width: 760px) {
+  .book-scene { perspective: none; width: min(430px, 94vw); }
+  .book { aspect-ratio: auto; display: grid; gap: 16px; transform: none !important; }
+  .page-base, .sheet { position: static; width: 100%; transform: none !important; transform-style: flat; cursor: default; }
+  .page-base { opacity: 1 !important; } /* the stacked layout never "opens", so never hide the end page */
+  .sheet[data-sheet="0"] { order: 1; }
+  .sheet[data-sheet="1"] { order: 2; }
+  .sheet[data-sheet="2"] { order: 3; }
+  .sheet[data-sheet="3"] { order: 4; }
+  .page-base.right { order: 5; }
+  .page-base.left { display: none; }
+  .sheet { display: grid; gap: 16px; }
+  .face { position: static; transform: none; backface-visibility: visible; -webkit-backface-visibility: visible; border-radius: 14px !important; box-shadow: 0 20px 40px -18px rgba(0, 0, 0, 0.5); }
+  .face.back { transform: none; } /* un-mirror the left-hand pages */
+  .face::after, .pg-final::after { display: none; }
+  .sheet .pg, .page-base .pg-final { padding: 9%; }
+  .sheet.cover .face.front { padding: 10% 9%; }
+  .pg-photo { grid-template-rows: none; }
+  .pg-frame { aspect-ratio: 4 / 3.4; }
+  .pg-quote { margin: 6% 0 !important; }
+  .pg-final { min-height: 240px; }
+  .page-base.right::after { display: none; }
+  .bk-arrow, .bk-dots { display: none; }
+  .bk-hint { display: none; }
+  .cover-hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .book-scene { opacity: 1; transform: none; }
+}
 
 /* ── Reviews ─────────────────────────────────────────────── */
 .reviews { background: linear-gradient(180deg, var(--cream), var(--tan-100) 50%, var(--cream)); }
@@ -926,9 +1654,8 @@ p { max-width: 65ch; }
 @media (max-width: 960px) {
   .nav-links, .nav-cta { display: none; }
   .nav-burger { display: block; }
-  .split, .micro-cols, .contact-grid { grid-template-columns: 1fr; }
+  .split, .contact-grid { grid-template-columns: 1fr; }
   .pillars { grid-template-columns: 1fr 1fr; }
-  .micro-gallery { grid-template-columns: 1fr; }
   .about-visual { order: -1; }
 }
 @media (max-width: 960px) {
@@ -959,7 +1686,7 @@ p { max-width: 65ch; }
 }
 @media (max-width: 620px) {
   body { font-size: 0.98rem; }
-  .pillars, .svc-grid, .ff-row, .price-row, .checks { grid-template-columns: 1fr; }
+  .pillars, .svc-grid, .ff-row { grid-template-columns: 1fr; }
   .review { padding: 1.8rem 1.4rem; }
   .review p { font-size: 1.12rem; }
   .review-track { min-height: 380px; }
@@ -967,7 +1694,6 @@ p { max-width: 65ch; }
   .hero-sub { font-size: 1.02rem; }
   .btn.lg { padding: 0.85rem 1.7rem; font-size: 0.96rem; }
   .contact-form { padding: 1.5rem 1.2rem 1.6rem; }
-  .photo-stack { padding-bottom: 3.4rem; }
   .stack-badge { font-size: 0.9rem; padding: 0.6rem 0.9rem; right: 2px; }
   .stats { gap: 0.8rem; }
   .stat { padding: 0.9rem 1rem; }

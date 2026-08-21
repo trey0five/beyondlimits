@@ -298,6 +298,66 @@
     });
   }
 
+  /* ── About: the two photos trade places on a timer ─────── */
+  const photoStack = $('#photoStack');
+  if (photoStack && !reduceMotion) {
+    const stackImgs = $$('.stack-img', photoStack);
+    const swap = () => {
+      photoStack.classList.add('swapping');
+      stackImgs.forEach((img) => {
+        img.classList.toggle('pos-big');
+        img.classList.toggle('pos-small');
+      });
+      setTimeout(() => photoStack.classList.remove('swapping'), 1150);
+    };
+    let stackTimer;
+    let stackHover = false;
+    let stackInView = false;
+    const stackRun = () => {
+      clearInterval(stackTimer);
+      if (stackInView && !stackHover) stackTimer = setInterval(swap, 3500);
+    };
+    const stackIO = new IntersectionObserver(
+      (entries) => {
+        stackInView = entries.some((e) => e.isIntersecting);
+        stackRun();
+      },
+      { threshold: 0.35 }
+    );
+    stackIO.observe(photoStack);
+    photoStack.addEventListener('mouseenter', () => { stackHover = true; stackRun(); });
+    photoStack.addEventListener('mouseleave', () => { stackHover = false; stackRun(); });
+  }
+
+  /* ── Founder stage: the grove grows only once the user has
+         scrolled the stage well into view — its top must reach the
+         upper 60% of the viewport. A height-ratio threshold would
+         never fire on short windows, since the stage is taller
+         than the viewport. ─────────────────────────────────── */
+  const founderStage = $('#founderStage');
+  if (founderStage) {
+    const fIO = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          founderStage.classList.add('in');
+          fIO.disconnect();
+        }
+      },
+      { threshold: 0, rootMargin: '0px 0px -40% 0px' }
+    );
+    fIO.observe(founderStage);
+  }
+
+  /* ── Team: expandable bios ─────────────────────────────── */
+  $$('.team-toggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.team-card');
+      const open = card.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(open));
+      $('.tt-label', btn).textContent = open ? 'Lovely to meet you' : btn.dataset.label;
+    });
+  });
+
   /* ── Modals: service info + consultation booking ───────── */
   const SERVICES = {
     ot: {
@@ -472,6 +532,111 @@
     const c = e.target.closest('[data-consult]');
     if (c) { e.preventDefault(); consultModal(c.dataset.interest || 'General question'); }
   });
+
+  /* ── Micro School photobook ────────────────────────────── */
+  const bookScene = $('#bookScene');
+  if (bookScene) {
+    const book = $('#book', bookScene);
+    const bkSheets = $$('.sheet', book).sort((a, b) => +a.dataset.sheet - +b.dataset.sheet);
+    const bkDots = $('#bkDots');
+    const bkPrev = $('#bkPrev');
+    const bkNext = $('#bkNext');
+    const BN = bkSheets.length;
+    let bkStep = 0; // number of sheets turned; 0 = closed on the cover
+    let bkBusy = false;
+    let bkInView = false;
+    let bkTimer;
+    const bkMobile = () => matchMedia('(max-width: 760px)').matches;
+
+    for (let i = 0; i <= BN; i++) {
+      const b = document.createElement('button');
+      b.setAttribute('aria-label', i === 0 ? 'Album cover' : `Album spread ${i}`);
+      b.addEventListener('click', () => bkGo(i, true));
+      bkDots.appendChild(b);
+    }
+    const bkPaint = () => {
+      $$('button', bkDots).forEach((d, i) => d.classList.toggle('on', i === bkStep));
+      bkPrev.disabled = bkStep === 0;
+      book.classList.toggle('closed', bkStep === 0);
+      bkSheets.forEach((sh, i) => sh.classList.toggle('turned', i < bkStep));
+    };
+    // resting z-order: right stack shows lowest index on top,
+    // left stack shows the most recently turned sheet on top
+    const bkSettle = () => {
+      bkSheets.forEach((sh, i) => { sh.style.zIndex = i < bkStep ? 1 + i : BN - i; });
+    };
+    // a page turns every 3 seconds while the album is in view;
+    // past the last spread it closes back onto the cover and loops
+    const bkAdvance = () => (bkStep >= BN ? 0 : bkStep + 1);
+    const bkAuto = () => {
+      clearInterval(bkTimer);
+      if (reduceMotion || bkMobile()) return;
+      bkTimer = setInterval(() => {
+        if (!bkInView || bkBusy) return;
+        bkGo(bkAdvance());
+      }, 3000);
+    };
+    const bkGo = (n, manual) => {
+      n = Math.max(0, Math.min(BN, n));
+      if (n === bkStep || bkBusy || bkMobile()) return;
+      if (manual) bkAuto();
+      // sheets in flight ride above both stacks; a multi-sheet jump
+      // (like closing the whole album) riffles them, and a sheet that
+      // departs later must land on top of the ones already down —
+      // closing, the cover flies last and finishes above everything
+      const lo = Math.min(n, bkStep);
+      const hi = Math.max(n, bkStep);
+      const span = hi - lo;
+      for (let i = lo; i < hi; i++) {
+        const sh = bkSheets[i];
+        const rank = n > bkStep ? i - lo : hi - 1 - i; // 0 departs first
+        sh.style.zIndex = 21 + rank;
+        sh.style.transitionDelay = span > 1 ? `${rank * 0.09}s` : '';
+      }
+      bkStep = n;
+      bkBusy = true;
+      bkPaint();
+      setTimeout(() => {
+        bkBusy = false;
+        bkSheets.forEach((sh) => { sh.style.transitionDelay = ''; });
+        bkSettle();
+      }, 1180 + (span > 1 ? span * 90 : 0));
+    };
+    bkPaint();
+    bkSettle();
+    bkPrev.addEventListener('click', () => bkGo(bkStep - 1, true));
+    bkNext.addEventListener('click', () => bkGo(bkAdvance(), true));
+    // tapping a right-hand page turns forward, a left-hand page back
+    book.addEventListener('click', (e) => {
+      if (e.target.closest('[data-consult]') || bkMobile()) return;
+      const face = e.target.closest('.face');
+      if (!face) return;
+      bkGo(bkStep + (face.classList.contains('back') ? -1 : 1), true);
+    });
+    let bkX = null;
+    book.addEventListener('touchstart', (e) => { bkX = e.touches[0].clientX; }, { passive: true });
+    book.addEventListener('touchend', (e) => {
+      if (bkX === null) return;
+      const dx = e.changedTouches[0].clientX - bkX;
+      if (Math.abs(dx) > 45) bkGo(bkStep + (dx < 0 ? 1 : -1), true);
+      bkX = null;
+    }, { passive: true });
+    // entrance: the closed album rises in, opens itself, then keeps turning
+    const bkIO = new IntersectionObserver(
+      (entries) => {
+        bkInView = entries.some((e) => e.isIntersecting);
+        if (bkInView && !bookScene.classList.contains('in')) {
+          bookScene.classList.add('in');
+          setTimeout(() => {
+            if (bkStep === 0) bkGo(1);
+            bkAuto();
+          }, reduceMotion ? 0 : 1400);
+        }
+      },
+      { threshold: 0.35 }
+    );
+    bkIO.observe(bookScene);
+  }
 
   /* ── Reviews: dynamic carousel + submissions + keeper ──── */
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
