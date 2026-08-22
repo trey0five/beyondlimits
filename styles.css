@@ -2255,3 +2255,41 @@ p { max-width: 65ch; }
   .mth-mega { width: 300px; }
   .mth-bloom { width: 64px; } .mth-bloom.b { width: 54px; } .mth-bloom.c { width: 46px; }
 }
+
+/* ── Contact card: rotating gold light ring instead of the bouquet ── */
+@property --ring-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.ci-bouquet { display: none; }
+.contact-info {
+  isolation: isolate;
+  background: var(--white);
+  border: 2px solid transparent;
+}
+.contact-info::before {
+  content: ""; position: absolute; inset: -3px; z-index: -1;
+  border-radius: calc(var(--radius) + 3px);
+  background: conic-gradient(from var(--ring-a),
+    var(--gold-lo), var(--gold-hi) 18%, #fffbe9 26%, var(--gold) 40%, var(--gold-lo) 55%,
+    var(--gold-hi) 72%, #fffbe9 80%, var(--gold) 92%, var(--gold-lo));
+  animation: ringSpin 7s linear infinite;
+  filter: drop-shadow(0 0 14px rgba(232, 199, 106, 0.45));
+}
+@keyframes ringSpin { to { --ring-a: 360deg; } }
+.contact-info::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  border-radius: var(--radius); background: var(--white);
+}
+
+/* ── Kind Words on phones: card + tree/grass scene on one screen ── */
+@media (max-width: 700px) {
+  .reviews { padding-top: 3.2rem; padding-bottom: 9.8rem; }
+  .reviews .section-head { margin-bottom: 1.3rem; }
+  .review-track { min-height: 292px; }
+  .review { padding: 1.5rem 1.2rem; }
+  .review p { font-size: 1.02rem; line-height: 1.45; }
+  .rv-add { margin-top: 1.1rem; }
+  .rv-add .btn.lg { padding: 0.7rem 1.4rem; font-size: 0.92rem; }
+  .rv-add-note { font-size: 0.82rem; margin-top: 0.5rem; max-width: 17rem; }
+  .rv-tree { height: 170px; bottom: 24px; }
+  .rv-tree.l { left: -9%; } .rv-tree.r { right: -9%; }
+  .rv-grass { height: 84px; }
+}
