@@ -2347,3 +2347,14 @@ body { position: relative; touch-action: pan-y pinch-zoom; }
 @media (max-width: 960px) {
   .fs-flowers img { height: calc(var(--h, 200px) * 0.58); width: auto; bottom: 4px; }
 }
+
+/* ── Contact rows: label sits above the details as a small gold heading ── */
+.ci-row > div { line-height: 1.55; }
+.ci-row strong {
+  display: block;
+  font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--gold-lo);
+  margin: 0.35rem 0 0.3rem;
+}
+.ci-org { display: block; font-weight: 600; color: var(--brown-700); }
