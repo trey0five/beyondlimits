@@ -2196,3 +2196,13 @@ p { max-width: 65ch; }
   .ci-bouquet { width: 118px; top: -62px; right: -14px; z-index: 0; }
   .ci-row, .quick-actions { position: relative; z-index: 1; }
 }
+
+/* service garden arrows (mobile) match the photo-book's gold arrows */
+.g-arrow {
+  width: 42px; height: 42px;
+  background: var(--grad-gold); background-size: 200% auto;
+  color: #fffbe9; border: 2px solid rgba(255, 253, 248, 0.9);
+  box-shadow: 0 10px 22px -8px rgba(74, 59, 40, 0.45), 0 0 0 3px rgba(232, 199, 106, 0.35);
+  font-size: 1.05rem;
+}
+.g-arrow:active { background-position: right center; transform: scale(0.94); }
