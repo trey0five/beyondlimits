@@ -2328,3 +2328,22 @@ body { position: relative; touch-action: pan-y pinch-zoom; }
   .fs-flowers img { bottom: 18px; width: calc(var(--w, 36px) * 0.78); }
 }
 @media (prefers-reduced-motion: reduce) { .fs-flowers img { transform: none; animation: none; } }
+
+/* ── Founder stage: a bed of whole sunflowers growing up through the grass ── */
+.fs-flowers { z-index: auto; }
+.fs-flowers img {
+  width: auto; height: calc(var(--h, 200px) * 0.8); /* heads stay clear of the bio's last line */
+  bottom: 8px; /* rooted below the grass tips, so the meadow covers the stem base */
+  transform: scale(0.05) rotate(-8deg);
+  transition: transform 1.5s cubic-bezier(0.34, 1.2, 0.44, 1) var(--d, 5.6s);
+  filter: drop-shadow(0 8px 12px rgba(74, 59, 40, 0.25));
+}
+.fs-flowers img.flip { scale: -1 1; }
+.founder-stage.in .fs-flowers img {
+  transform: scale(1) rotate(0deg);
+  animation: sunflowerSway 5.5s ease-in-out calc(var(--d, 5.6s) + 1.5s) infinite alternate;
+}
+@keyframes sunflowerSway { from { rotate: -2deg; } to { rotate: 2deg; } }
+@media (max-width: 960px) {
+  .fs-flowers img { height: calc(var(--h, 200px) * 0.58); width: auto; bottom: 4px; }
+}
