@@ -413,7 +413,16 @@
         tgIdx = best;
       }, 120);
     }, { passive: true });
-    tgStart();
+    // the carousel only starts once the team section scrolls into view,
+    // and it holds on the co-founder for a beat before moving
+    const tgIO = new IntersectionObserver(
+      (entries) => {
+        clearInterval(tgTimer); clearTimeout(tgTimer);
+        if (entries.some((e) => e.isIntersecting) && !reduceMotion) tgTimer = setTimeout(tgStart, 3800);
+      },
+      { threshold: 0.3 }
+    );
+    tgIO.observe(teamGrid);
   }
 
   /* mobile-only "Read Her Story" expander in the founder bio */

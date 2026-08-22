@@ -1835,11 +1835,43 @@ p { max-width: 65ch; }
 
 /* founder on phones: portrait sits higher; small whole trees flank the arch */
 @media (max-width: 960px) {
-  .founder-grid { padding-top: clamp(4.2rem, 15vw, 5.6rem); }
-  .fs-sun { width: clamp(88px, 22vw, 110px); }
+  .founder-grid { padding-top: clamp(2.4rem, 8vw, 3.2rem); }
+  .fs-sun { width: clamp(62px, 15vw, 76px); top: 10px; left: 10px; }
   .fs-tree { opacity: 0.95; }
-  .fs-tree:nth-of-type(1) { left: -7%; height: 165px; }  /* oak */
-  .fs-tree:nth-of-type(2) { left: 5%;  height: 132px; }  /* birch */
-  .fs-tree:nth-of-type(4) { left: 89%; height: 138px; }  /* birch, flipped */
-  .fs-tree:nth-of-type(5) { left: 78%; height: 178px; }  /* blossom */
+  .fs-tree:nth-of-type(1) { left: -7%; height: 196px; }  /* oak */
+  .fs-tree:nth-of-type(2) { left: 5%;  height: 156px; }  /* birch */
+  .fs-tree:nth-of-type(4) { left: 89%; height: 162px; }  /* birch, flipped */
+  .fs-tree:nth-of-type(5) { left: 78%; height: 210px; }  /* blossom */
 }
+
+/* ── Co-founder: the grandest bloom in the garden ───────── */
+.team-card.cofounder {
+  background:
+    linear-gradient(var(--white), var(--white)) padding-box,
+    linear-gradient(135deg, var(--gold-hi), var(--tan-300) 35%, var(--gold) 65%, var(--sage-200)) border-box;
+  border: 2px solid transparent;
+  box-shadow: 0 32px 70px -30px rgba(138, 100, 32, 0.5);
+}
+.team-card.cofounder .bloom-frame { --bf: min(360px, 70vw); }
+.team-card.cofounder .tf-halo {
+  inset: 5%;
+  background: conic-gradient(from 0deg, #f3c34a, #e98a2c, var(--gold-hi), #d9a441, #f6d36b, #e98a2c, #f3c34a);
+  opacity: 0.72; filter: blur(16px);
+}
+.team-card.cofounder .tf-ring {
+  position: absolute; inset: 13%; border-radius: 50%;
+  border: 2px solid rgba(232, 199, 106, 0.75);
+  box-shadow: 0 0 28px rgba(232, 199, 106, 0.6), inset 0 0 14px rgba(232, 199, 106, 0.35);
+  animation: fbPulse 2.8s ease-out infinite;
+  pointer-events: none; z-index: 2;
+}
+.team-card.cofounder .tf-mega img { filter: drop-shadow(0 18px 36px rgba(138, 100, 32, 0.42)) saturate(1.08); }
+.team-card.cofounder .tf-ribbon {
+  position: absolute; left: 50%; top: 1%; translate: -50% 0; z-index: 7;
+  padding: 0.38rem 1.05rem; border-radius: 99px;
+  background: var(--grad-gold); background-size: 200% auto; animation: shimmer 4s linear infinite;
+  color: #fffbe9; font-weight: 700; font-size: 0.7rem; letter-spacing: 0.2em; text-indent: 0.2em; text-transform: uppercase;
+  box-shadow: 0 10px 22px -8px rgba(138, 100, 32, 0.6), 0 0 0 3px rgba(255, 253, 248, 0.9);
+  white-space: nowrap;
+}
+.team-card.cofounder .tf-spark { font-size: 1.3em; }
