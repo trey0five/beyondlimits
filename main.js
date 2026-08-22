@@ -339,9 +339,18 @@
           fIO.disconnect();
         }
       },
-      { threshold: 0, rootMargin: '0px 0px -40% 0px' }
+      { threshold: 0, rootMargin: '0px 0px -22% 0px' }
     );
     fIO.observe(founderStage);
+    // mobile: size the grove/meadow scene to end right under the portrait
+    const fsScene = () => {
+      const v = $('.founder-visual', founderStage);
+      if (!v || !matchMedia('(max-width: 960px)').matches) { founderStage.style.removeProperty('--fs-scene'); return; }
+      founderStage.style.setProperty('--fs-scene', `${v.offsetTop + v.offsetHeight + 64}px`);
+    };
+    fsScene();
+    addEventListener('load', fsScene);
+    addEventListener('resize', fsScene);
   }
   /* team carousel: auto-advances every 3s on mobile, pauses while
      touching, and never yanks a card whose bio is open */

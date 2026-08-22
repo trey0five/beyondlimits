@@ -93,13 +93,30 @@ p { max-width: 65ch; }
   background-size: 220% auto;
   box-shadow: 0 12px 28px -10px rgba(185, 138, 47, 0.55);
 }
-.btn.gold:hover { transform: translateY(-3px) scale(1.02); background-position: right center; box-shadow: 0 18px 36px -10px rgba(185, 138, 47, 0.65); }
+.btn.gold:hover, .btn.gold:focus-visible {
+  transform: translateY(-3px) scale(1.03); background-position: right center;
+  box-shadow: 0 18px 36px -10px rgba(185, 138, 47, 0.7), 0 0 0 4px rgba(232, 199, 106, 0.35);
+}
+/* light sweeps across every button on hover / focus */
+.btn { position: relative; overflow: hidden; isolation: isolate; }
+.btn::after {
+  content: ""; position: absolute; top: -40%; bottom: -40%; left: -50%; width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 251, 233, 0.6), transparent);
+  transform: skewX(-20deg) translateX(-140%);
+  transition: transform 0.65s ease;
+  pointer-events: none;
+}
+.btn:hover::after, .btn:focus-visible::after { transform: skewX(-20deg) translateX(480%); }
+.btn:active { transform: translateY(1px) scale(0.96) !important; transition-duration: 0.1s; }
 .btn.ghost {
   color: var(--sage-800);
   background: transparent;
   box-shadow: inset 0 0 0 1.5px var(--sage-400);
 }
-.btn.ghost:hover { transform: translateY(-3px); background: var(--sage-100); }
+.btn.ghost:hover, .btn.ghost:focus-visible {
+  transform: translateY(-3px); background: var(--sage-100); color: var(--gold-lo);
+  box-shadow: inset 0 0 0 1.5px var(--gold), 0 12px 26px -12px rgba(185, 138, 47, 0.5);
+}
 
 /* ── Preloader ───────────────────────────────────────────── */
 .preloader {
@@ -306,9 +323,28 @@ p { max-width: 65ch; }
   .tree:nth-of-type(1) { display: block; left: -2%; height: 33vh; }  /* poplar */
   .tree:nth-of-type(4) { display: block; left: 22%; height: 38vh; }  /* oak */
   .tree:nth-of-type(6) { display: block; left: 64%; height: 34vh; }  /* willow */
-  .meadow.near { height: 118px; }
-  .meadow.blooms { height: 86px; }
-  .hero-inner { padding-bottom: 280px; }
+  .meadow.near { height: 100px; }
+  .meadow.blooms { height: 72px; }
+  /* the whole hero — copy AND meadow — fits in the first screen */
+  .hero { height: 100svh; min-height: 0; align-items: flex-start; }
+  .hero-inner { padding: 4.6rem 1rem 130px; }
+  .hero-logo { width: 150px; margin-bottom: 0.5rem; }
+  .hero-kicker { font-size: 0.64rem; margin-bottom: 0.55rem; }
+  .hero-title { font-size: 2.05rem; margin-bottom: 0.75rem; }
+  .hero-sub { font-size: 0.92rem; margin-bottom: 1rem; }
+  .hero-ctas { gap: 0.55rem; }
+  .hero .btn.lg { padding: 0.7rem 1.3rem; font-size: 0.9rem; }
+}
+/* short phones: tighten the copy so it clears the tree canopies */
+@media (max-width: 700px) and (max-height: 720px) {
+  .hero-inner { padding-top: 4rem; }
+  .hero-logo { width: 118px; margin-bottom: 0.3rem; }
+  .hero-kicker { margin-bottom: 0.35rem; }
+  .hero-title { font-size: 1.72rem; margin-bottom: 0.5rem; }
+  .hero-sub { font-size: 0.84rem; margin-bottom: 0.7rem; }
+  .tree:nth-of-type(1) { height: 26vh; }
+  .tree:nth-of-type(4) { height: 30vh; }
+  .tree:nth-of-type(6) { height: 27vh; }
 }
 
 
@@ -741,10 +777,14 @@ p { max-width: 65ch; }
     padding-top: clamp(6.5rem, 24vw, 8.5rem);
     padding-bottom: clamp(6.5rem, 16vw, 8rem);
   }
-  .founder-visual { margin-bottom: 1.6rem; }
+  .founder-visual { margin-bottom: 5.4rem; } /* room for the meadow strip under the badge */
   .founder-copy { text-align: left; }
   .fs-sun { width: clamp(104px, 26vw, 130px); top: 16px; left: 16px; }
-  .fs-tree { opacity: 0.55; }
+  /* the scene sits behind the portrait (height measured by JS) so the
+     trees, meadow and sun are all in view the moment the headshot is */
+  .fs-trees { top: 0; bottom: auto; height: var(--fs-scene, 560px); }
+  .fs-meadow { bottom: auto; height: 110px; top: calc(var(--fs-scene, 560px) - 110px); }
+  .fs-tree { opacity: 0.78; }
   .fs-tree:nth-of-type(3) { display: none; }
   .founder-more {
     display: grid; grid-template-rows: 0fr;
@@ -768,7 +808,7 @@ p { max-width: 65ch; }
   .founder-copy.open .founder-toggle i { transform: rotate(225deg); }
 }
 @media (max-width: 620px) {
-  .fs-meadow { height: 88px; }
+  .fs-meadow { height: 88px; top: calc(var(--fs-scene, 560px) - 88px); }
   .fs-tree { height: calc(var(--th, 200px) * 0.72); opacity: 0.38; } /* keep founder copy readable over realistic trees */
   .founder-photo { width: min(250px, 74vw); }
   .founder-quote p { font-size: 1.18rem; }
