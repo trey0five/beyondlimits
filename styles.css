@@ -406,7 +406,7 @@ p { max-width: 65ch; }
   position: absolute;
   left: 50%; bottom: 34%;
   translate: -50% 0;
-  width: calc(var(--bw, 140px) * 1.55);
+  width: calc(var(--bw, 140px) * 1.42);
   height: auto; overflow: visible;
   pointer-events: none;
   opacity: 0;
@@ -1945,4 +1945,25 @@ p { max-width: 65ch; }
 @keyframes badgeFloat {
   0%, 100% { transform: translateY(0) rotate(-1.5deg); }
   50% { transform: translateY(-11px) rotate(1.5deg); }
+}
+
+/* ── Service flower labels: cream ribbon banners with a shimmering
+     gold edge; solid ink lettering so they always read ───────── */
+.arc-label { filter: drop-shadow(0 8px 12px rgba(74, 59, 40, 0.22)); }
+.arc-band-edge { fill: none; stroke: url("#goldTextGrad"); stroke-width: 36; stroke-linecap: round; }
+.arc-band { fill: none; stroke: #fffdf8; stroke-width: 27; stroke-linecap: round; }
+.arc-label text {
+  fill: var(--brown-700);
+  stroke: none;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic; font-weight: 700;
+  font-size: 19.5px; letter-spacing: 0.5px;
+  dominant-baseline: middle;
+}
+.sprout:hover .arc-band-edge { stroke-width: 40; }
+.sprout:hover .arc-label text { fill: var(--gold-lo); }
+@media (max-width: 1080px) {
+  .arc-label text { font-size: 22px; stroke: none; }
+  .arc-band-edge { stroke-width: 40; }
+  .arc-band { stroke-width: 30; }
 }
