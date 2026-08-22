@@ -984,6 +984,16 @@
   }, { passive: true });
   apStart();
 
+  /* ── Reviews + Contact: garden scenes enter on scroll ──── */
+  ['#reviews', '#contact'].forEach((sel) => {
+    const sec = $(sel);
+    if (!sec) return;
+    const sio = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { sec.classList.add('in'); sio.disconnect(); }
+    }, { threshold: 0.22 });
+    sio.observe(sec);
+  });
+
   /* ── Contact ───────────────────────────────────────────── */
   const ADMIN_EMAIL = 'hello@beyondlimitstherapy.com'; // UPDATE before launch
 
