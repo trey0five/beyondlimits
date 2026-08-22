@@ -1848,14 +1848,16 @@ p { max-width: 65ch; }
 }
 
 /* ── Co-founder: the grandest bloom in the garden ───────── */
-.team-card.cofounder {
+/* gold edge lives on the ::before surface, so the card's box stays
+   identical in size to every other team card */
+.team-card.cofounder::before {
   background:
     linear-gradient(var(--white), var(--white)) padding-box,
     linear-gradient(135deg, var(--gold-hi), var(--tan-300) 35%, var(--gold) 65%, var(--sage-200)) border-box;
   border: 2px solid transparent;
   box-shadow: 0 32px 70px -30px rgba(138, 100, 32, 0.5);
 }
-.team-card.cofounder .bloom-frame { --bf: min(360px, 70vw); }
+/* same frame size as every other card — the blooms are bigger, the card is not */
 .team-card.cofounder .tf-halo {
   inset: 5%;
   background: conic-gradient(from 0deg, #f3c34a, #e98a2c, var(--gold-hi), #d9a441, #f6d36b, #e98a2c, #f3c34a);
@@ -1878,3 +1880,6 @@ p { max-width: 65ch; }
   white-space: nowrap;
 }
 .team-card.cofounder .tf-spark { font-size: 1.3em; }
+
+.team-card.cofounder .tf-photo { z-index: 6; }
+.team-card.cofounder .tf-petals { z-index: 5; }
