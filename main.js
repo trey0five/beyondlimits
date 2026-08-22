@@ -445,11 +445,31 @@
   /* mobile-only "Read Her Story" expander in the founder bio */
   const founderToggle = $('#founderToggle');
   if (founderToggle) {
+    // "Read Her Story" opens the same kind of flashy popup as the team cards
     founderToggle.addEventListener('click', () => {
       const copy = founderToggle.closest('.founder-copy');
-      const open = copy.classList.toggle('open');
-      founderToggle.setAttribute('aria-expanded', String(open));
-      $('.ft-label', founderToggle).textContent = open ? 'Show Less' : 'Read Her Story';
+      const intro = $$('.founder-copy > p', copy).find((p) => !p.classList.contains('founder-role'))?.outerHTML || '';
+      const more = $('.fm-inner', copy)?.innerHTML || '';
+      const role = $('.founder-role', copy)?.innerHTML || '';
+      const photo = $('.founder-photo img');
+      const sparks = [[8, 18, 0], [90, 14, 0.7], [14, 84, 1.2], [86, 78, 0.4], [50, 6, 1.6]]
+        .map(([x, y, d]) => `<span class="tf-spark" style="--sx:${x}%; --sy:${y}%; --sd:${d}s">✦</span>`).join('');
+      openModal(`
+        <div class="mo-team-head">
+          <img class="mth-mega" src="assets/img/flower3-sunflower.webp" alt="" />
+          <img class="mth-bloom a" src="assets/img/sunflower-plant-a.webp" alt="" />
+          <img class="mth-bloom b" src="assets/img/flower3-rose.webp" alt="" />
+          <img class="mth-bloom c" src="assets/img/flower3-dahlia.webp" alt="" />
+          ${sparks}
+          <div class="mth-photo">${photo ? `<img src="${photo.getAttribute('src')}" alt="Vickie Goetz" />` : ''}</div>
+        </div>
+        <div class="mo-body mo-team">
+          <span class="mo-kicker">✦ Meet the Founder</span>
+          <h3 class="mo-title">Vickie Goetz</h3>
+          <p class="mo-tag">${role}</p>
+          <div class="mth-bio">${intro}${more}</div>
+          <div class="mo-ctas"><button class="btn gold" data-consult>Book a Consultation</button></div>
+        </div>`);
     });
   }
 

@@ -2358,3 +2358,9 @@ body { position: relative; touch-action: pan-y pinch-zoom; }
   margin: 0.35rem 0 0.3rem;
 }
 .ci-org { display: block; font-weight: 600; color: var(--brown-700); }
+
+/* founder popup: the quote's big opening mark needs room inside the modal */
+.mo-team .mth-bio .founder-quote { margin-left: 1.2rem; }
+.mo-team .mth-bio .founder-quote::before { background: transparent; }
+.mo-team .mth-bio .founder-quote p { margin: 0; }
+.mth-bloom.a[src*="sunflower-plant"] { width: 64px; bottom: -6px; }
