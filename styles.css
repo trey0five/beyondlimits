@@ -1969,3 +1969,50 @@ p { max-width: 65ch; }
   .arc-band-edge { stroke-width: 40; }
   .arc-band { stroke-width: 30; }
 }
+
+/* ── Service flower labels: plant-marker stakes in the soil ───── */
+.arc-label { display: none; }
+.sprout .s-label {
+  display: block; position: absolute; left: 50%; bottom: -9px;
+  translate: -50% 0;
+  width: max-content; max-width: 132px;
+  padding: 0.4rem 0.8rem 0.36rem;
+  background:
+    linear-gradient(var(--white), var(--white)) padding-box,
+    var(--grad-gold) border-box;
+  background-size: auto, 200% auto;
+  border: 2px solid transparent; border-radius: 10px;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic; font-weight: 700; font-size: 1.02rem; line-height: 1.12;
+  color: var(--brown-700); text-align: center; white-space: normal;
+  box-shadow: 0 12px 24px -10px rgba(74, 59, 40, 0.45), 0 0 0 3px rgba(255, 253, 248, 0.8);
+  transform-origin: bottom center;
+  transform: translateY(42px) scale(0.35) rotate(-14deg);
+  opacity: 0;
+  transition: transform 0.85s cubic-bezier(0.34, 1.45, 0.44, 1) calc(var(--sd, 0s) + 1.05s),
+    opacity 0.4s ease calc(var(--sd, 0s) + 1.05s), color 0.25s ease;
+  z-index: 2;
+}
+/* the stake driven into the ground */
+.sprout .s-label::after {
+  content: ""; position: absolute; left: 50%; top: 100%; translate: -50% 0;
+  width: 4px; height: 16px;
+  background: linear-gradient(var(--gold), var(--gold-lo));
+  border-radius: 0 0 3px 3px;
+}
+/* a twinkle on the corner */
+.sprout .s-label::before {
+  content: "✦"; position: absolute; top: -10px; right: -7px;
+  color: var(--gold); font-style: normal; font-size: 0.8rem;
+  text-shadow: 0 0 9px rgba(232, 199, 106, 0.95);
+  animation: twinkle 2.4s ease-in-out infinite; animation-delay: var(--sd, 0s);
+}
+.sprout:nth-child(odd) { --tilt: -3deg; }
+.sprout:nth-child(even) { --tilt: 3deg; }
+.sprout.in .s-label { opacity: 1; transform: translateY(0) scale(1) rotate(var(--tilt, -3deg)); }
+.sprout:hover .s-label { transform: translateY(-4px) scale(1.08) rotate(0deg); color: var(--gold-lo); transition-delay: 0s; }
+@media (max-width: 1080px) {
+  .sprout .s-label { display: block; font-size: 0.92rem; max-width: 112px; padding: 0.34rem 0.6rem 0.3rem; bottom: -10px; }
+  .garden-viewport { padding-bottom: 3.4rem; } /* room below the ground for the stakes (viewport clips at its padding edge) */
+  .bk-nav, .garden-nav { margin-top: 0.6rem; }
+}
