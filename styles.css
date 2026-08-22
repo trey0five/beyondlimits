@@ -1855,6 +1855,7 @@ p { max-width: 65ch; }
     linear-gradient(var(--white), var(--white)) padding-box,
     linear-gradient(135deg, var(--gold-hi), var(--tan-300) 35%, var(--gold) 65%, var(--sage-200)) border-box;
   border: 2px solid transparent;
+  border-radius: var(--radius);
   box-shadow: 0 32px 70px -30px rgba(138, 100, 32, 0.5);
 }
 /* same frame size as every other card — the blooms are bigger, the card is not */
