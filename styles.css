@@ -2306,3 +2306,25 @@ body { position: relative; touch-action: pan-y pinch-zoom; }
 .pillars, .team-viewport, .garden-viewport, .book-scene { touch-action: pan-x pan-y; }
 /* the photo-stack glint sweeps wide — keep it inside the stack's bounds */
 .photo-stack { clip-path: inset(-70px -14px -70px -14px); }
+
+/* ── Founder stage: cute blooms pop up through the grass after the trees ── */
+.fs-flowers { position: absolute; left: 0; right: 0; bottom: 0; height: 0; pointer-events: none; z-index: 2; }
+.fs-flowers img {
+  position: absolute; left: var(--x, 50%); bottom: 22px;
+  width: var(--w, 36px); translate: -50% 0;
+  transform-origin: bottom center;
+  transform: scale(0) rotate(-70deg);
+  transition: transform 1s cubic-bezier(0.34, 1.5, 0.44, 1) var(--d, 5.6s);
+  filter: drop-shadow(0 6px 10px rgba(74, 59, 40, 0.32));
+}
+.founder-stage.in .fs-flowers img {
+  transform: scale(1) rotate(0deg);
+  animation: flowerBob 3.8s ease-in-out calc(var(--d, 5.6s) + 1s) infinite alternate;
+}
+@keyframes flowerBob { from { rotate: -3deg; } to { rotate: 3deg; } }
+.founder-badge .fb-title { letter-spacing: 0.22em; text-indent: 0.22em; }
+@media (max-width: 960px) {
+  .fs-flowers { bottom: auto; top: var(--fs-scene, 560px); }
+  .fs-flowers img { bottom: 18px; width: calc(var(--w, 36px) * 0.78); }
+}
+@media (prefers-reduced-motion: reduce) { .fs-flowers img { transform: none; animation: none; } }
