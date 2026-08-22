@@ -1887,7 +1887,9 @@ p { max-width: 65ch; }
 
 /* ── Micro-school album on phones: centered spread, nav row below ── */
 @media (max-width: 760px) {
-  .book-scene { width: min(430px, 90vw); }
+  /* wider than the wrapper's content box, so center it against the viewport */
+  .book-scene { --bsw: min(470px, calc(100vw - 1.1rem)); width: var(--bsw); margin-inline: calc((100% - var(--bsw)) / 2); }
+  .page-base.right::after { display: none; } /* page-edge strip reads as a scrollbar at phone size */
   /* arrows join the dots in a nav row under the book — always visible,
      never clipped by the screen edge */
   .bk-nav { display: flex; align-items: center; justify-content: center; gap: 1.1rem; margin-top: 1.7rem; }
