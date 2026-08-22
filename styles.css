@@ -2206,3 +2206,52 @@ p { max-width: 65ch; }
   font-size: 1.05rem;
 }
 .g-arrow:active { background-position: right center; transform: scale(0.94); }
+
+/* ── Team popup: portrait in a gold ring over a spinning bloom ───── */
+.team-bio { display: none !important; }
+.mo-team-head {
+  position: relative; height: 280px; overflow: hidden;
+  display: grid; place-items: center;
+  background:
+    radial-gradient(420px 220px at 50% 110%, rgba(232, 199, 106, 0.35), transparent 70%),
+    linear-gradient(160deg, var(--sage-100), var(--tan-100) 55%, var(--cream));
+}
+.mth-mega {
+  position: absolute; width: 380px; opacity: 0.6;
+  animation: fbSpin 70s linear infinite, mthMegaIn 1.2s cubic-bezier(0.34, 1.2, 0.44, 1) backwards;
+}
+@keyframes mthMegaIn { from { transform: scale(0) rotate(-200deg); opacity: 0; } }
+.mth-photo {
+  position: relative; z-index: 2;
+  width: 172px; aspect-ratio: 1; border-radius: 50%; padding: 6px;
+  background: var(--grad-gold); background-size: 200% auto;
+  box-shadow: 0 22px 46px -16px rgba(74, 59, 40, 0.55), 0 0 0 7px rgba(255, 253, 248, 0.9);
+  animation: shimmer 4s linear infinite, mthPop 0.9s 0.15s cubic-bezier(0.34, 1.45, 0.44, 1) backwards;
+}
+@keyframes mthPop { from { transform: scale(0); } }
+.mth-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+.mth-bloom {
+  position: absolute; z-index: 3; width: 84px; pointer-events: none;
+  filter: drop-shadow(0 10px 18px rgba(74, 59, 40, 0.35));
+  animation: moBloomIn 0.8s cubic-bezier(0.34, 1.5, 0.44, 1) backwards;
+}
+.mth-bloom.a { left: 9%; bottom: 14px; animation-delay: 0.45s; }
+.mth-bloom.b { right: 7%; top: 18px; width: 70px; animation-delay: 0.6s; }
+.mth-bloom.c { right: 12%; bottom: 10px; width: 58px; animation-delay: 0.75s; }
+.mo-team-head .tf-spark { z-index: 4; }
+.mo-team { text-align: center; }
+.mo-team .team-langs { margin: 0.2rem 0 1rem; }
+.mo-team .mth-bio { text-align: left; }
+.mo-team .mth-bio > * { animation: moRise 0.7s cubic-bezier(0.22, 0.9, 0.3, 1) backwards; }
+.mo-team .mth-bio > *:nth-child(2) { animation-delay: 0.1s; }
+.mo-team .mth-bio > *:nth-child(3) { animation-delay: 0.2s; }
+.mo-team .mth-bio > *:nth-child(4) { animation-delay: 0.3s; }
+.mo-team .mth-bio > *:nth-child(5) { animation-delay: 0.4s; }
+.mo-team .mth-bio > *:nth-child(6) { animation-delay: 0.5s; }
+.mo-team .mo-ctas { justify-content: center; }
+@media (max-width: 560px) {
+  .mo-team-head { height: 230px; }
+  .mth-photo { width: 140px; }
+  .mth-mega { width: 300px; }
+  .mth-bloom { width: 64px; } .mth-bloom.b { width: 54px; } .mth-bloom.c { width: 46px; }
+}

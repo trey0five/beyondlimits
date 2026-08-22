@@ -444,13 +444,36 @@
     });
   }
 
-  /* ── Team: expandable bios ─────────────────────────────── */
+  /* ── Team: "Get to Know" opens a flashy popup built from the card ── */
   $$('.team-toggle').forEach((btn) => {
     btn.addEventListener('click', () => {
       const card = btn.closest('.team-card');
-      const open = card.classList.toggle('open');
-      btn.setAttribute('aria-expanded', String(open));
-      $('.tt-label', btn).textContent = open ? 'Lovely to meet you' : btn.dataset.label;
+      const photo = $('.tf-photo img', card);
+      const mega = $('.tf-mega img', card);
+      const crown = $$('.tc-arm img', card).map((i) => i.getAttribute('src'));
+      const name = $('.team-name', card)?.textContent.trim() || '';
+      const role = $('.team-role', card)?.innerHTML || '';
+      const langs = $('.team-langs', card)?.innerHTML || '';
+      const bio = $('.tb-inner', card)?.innerHTML || '';
+      const sparks = [[8, 18, 0], [90, 14, 0.7], [14, 84, 1.2], [86, 78, 0.4], [50, 6, 1.6]]
+        .map(([x, y, d]) => `<span class="tf-spark" style="--sx:${x}%; --sy:${y}%; --sd:${d}s">✦</span>`).join('');
+      openModal(`
+        <div class="mo-team-head">
+          ${mega ? `<img class="mth-mega" src="${mega.getAttribute('src')}" alt="" />` : ''}
+          ${crown[0] ? `<img class="mth-bloom a" src="${crown[0]}" alt="" />` : ''}
+          ${crown[1] ? `<img class="mth-bloom b" src="${crown[1]}" alt="" />` : ''}
+          ${crown[2] ? `<img class="mth-bloom c" src="${crown[2]}" alt="" />` : ''}
+          ${sparks}
+          <div class="mth-photo">${photo ? `<img src="${photo.getAttribute('src')}" alt="${esc(name)}" style="${photo.getAttribute('style') || ''}" />` : ''}</div>
+        </div>
+        <div class="mo-body mo-team">
+          <span class="mo-kicker">✦ Meet the Team</span>
+          <h3 class="mo-title">${esc(name)}</h3>
+          <p class="mo-tag">${role}</p>
+          ${langs ? `<div class="team-langs">${langs}</div>` : ''}
+          <div class="mth-bio">${bio}</div>
+          <div class="mo-ctas"><button class="btn gold" data-consult>Book a Consultation</button></div>
+        </div>`);
     });
   });
 
