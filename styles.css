@@ -1835,7 +1835,10 @@ p { max-width: 65ch; }
 
 /* founder on phones: portrait sits higher; small whole trees flank the arch */
 @media (max-width: 960px) {
-  .founder-grid { padding-top: clamp(2.4rem, 8vw, 3.2rem); }
+  .founder-grid { padding-top: clamp(1rem, 4vw, 1.5rem); }
+  .founder-photo { width: min(205px, 58vw); }
+  /* plant the trunks inside the grass so their feet never show below it */
+  .fs-trees { height: calc(var(--fs-scene, 560px) - 30px); }
   .fs-sun { width: clamp(62px, 15vw, 76px); top: 10px; left: 10px; }
   .fs-tree { opacity: 0.95; }
   .fs-tree:nth-of-type(1) { left: -7%; height: 196px; }  /* oak */
