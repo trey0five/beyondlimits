@@ -2297,3 +2297,12 @@ p { max-width: 65ch; }
 
 /* the five-tap owner shortcut shouldn't highlight text while tapping */
 .founder-name, .founder-photo { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+
+/* ── Lock the page horizontally on phones (iOS ignores overflow-x on
+     body alone): no sideways panning, while carousels keep their own
+     horizontal gestures ─────────────────────────────────────── */
+html, body { width: 100%; max-width: 100%; }
+body { position: relative; touch-action: pan-y pinch-zoom; }
+.pillars, .team-viewport, .garden-viewport, .book-scene { touch-action: pan-x pan-y; }
+/* the photo-stack glint sweeps wide — keep it inside the stack's bounds */
+.photo-stack { clip-path: inset(-70px -14px -70px -14px); }

@@ -254,7 +254,16 @@
       }));
     };
     seed();
-    addEventListener('resize', seed);
+    // phones fire resize constantly as the address bar shows/hides —
+    // only re-seed on a real width change; otherwise just resize the canvas
+    let lastW = canvas.offsetWidth;
+    addEventListener('resize', () => {
+      if (canvas.offsetWidth !== lastW) { lastW = canvas.offsetWidth; seed(); return; }
+      const oldH = H;
+      W = canvas.width = canvas.offsetWidth * devicePixelRatio;
+      H = canvas.height = canvas.offsetHeight * devicePixelRatio;
+      if (oldH) parts.forEach((p) => { p.y = (p.y / oldH) * H; });
+    });
     const loop = () => {
       ctx.clearRect(0, 0, W, H);
       for (const p of parts) {
