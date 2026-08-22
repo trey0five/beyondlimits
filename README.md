@@ -26,8 +26,9 @@ python3 -m http.server 8080
 - Visitors click **"Share Your Story ✦"** and submit through the flower popup.
   Their review shows immediately **on their own device** (localStorage, marked
   "pending") and is **emailed to the practice inbox**.
-- The owner opens the site with **`#garden-keeper`** in the URL
-  (e.g. `https://yoursite.com/#garden-keeper`) to open the management panel:
+- The owner opens the management panel either by adding **`#garden-keeper`**
+  to the URL (e.g. `https://yoursite.com/#garden-keeper`) or by **tapping
+  Vickie's name or portrait five times quickly** in the Meet the Founder section:
   add reviews from the inbox, edit, reorder, delete — then click
   **Download reviews.js** and replace that file on the web host.
   The site updates for every visitor. No AWS, no database, and nothing
