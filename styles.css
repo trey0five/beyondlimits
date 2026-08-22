@@ -1087,19 +1087,22 @@ p { max-width: 65ch; }
 
 /* mobile: the team becomes a swipeable carousel with edge peek */
 @media (max-width: 860px) {
+  .team-viewport {
+    overflow: hidden;
+    margin: 0 calc(-1 * clamp(1.2rem, 4vw, 3rem));
+    padding: 0.5rem 0 1.5rem;
+  }
   .team-grid {
     display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
     align-items: flex-start;
     gap: 1rem;
     max-width: none;
-    margin: 0 calc(-1 * clamp(1.2rem, 4vw, 3rem));
-    padding: 0.5rem clamp(1.2rem, 4vw, 3rem) 1.5rem;
-    scrollbar-width: none;
+    margin: 0;
+    padding: 0 8%;
+    transition: transform 0.75s cubic-bezier(0.22, 0.9, 0.3, 1);
+    will-change: transform;
   }
-  .team-grid::-webkit-scrollbar { display: none; }
-  .team-card { flex: 0 0 84%; max-width: 24rem; scroll-snap-align: center; }
+  .team-card { flex: 0 0 84%; max-width: 24rem; }
   /* garden stems: pinned to the bottom corners, leaning out and
      poking below the card so they're actually visible on phones */
   .team-grid { padding-bottom: 4.4rem; }
@@ -2015,4 +2018,46 @@ p { max-width: 65ch; }
   .sprout .s-label { display: block; font-size: 0.92rem; max-width: 112px; padding: 0.34rem 0.6rem 0.3rem; bottom: -10px; }
   .garden-viewport { padding-bottom: 3.4rem; } /* room below the ground for the stakes (viewport clips at its padding edge) */
   .bk-nav, .garden-nav { margin-top: 0.6rem; }
+}
+
+/* ── Founder badge: still, gold-edged, with a passing glint ─────── */
+.founder-badge {
+  animation: none;
+  overflow: hidden;
+  padding: 0.7rem 1.5rem 0.75rem;
+  border-radius: 18px;
+  background:
+    linear-gradient(var(--white), var(--cream)) padding-box,
+    var(--grad-gold) border-box;
+  background-size: auto, 200% auto;
+  border: 2px solid transparent;
+  box-shadow: 0 20px 44px -16px rgba(138, 100, 32, 0.5), 0 0 0 4px rgba(255, 253, 248, 0.85), 0 0 26px rgba(232, 199, 106, 0.3);
+}
+.founder-badge::before, .founder-badge::after { content: none; animation: none; }
+.founder-badge { z-index: 6; } /* above the stage sparkles */
+/* light sweeps across the badge every few seconds */
+.founder-badge::after {
+  content: ""; position: absolute; top: -40%; bottom: -40%; left: -60%; width: 45%;
+  background: linear-gradient(90deg, transparent, rgba(255, 251, 233, 0.85), transparent);
+  transform: skewX(-20deg) translateX(-160%);
+  animation: badgeGlint 5.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes badgeGlint { 0%, 72% { transform: skewX(-20deg) translateX(-160%); } 100% { transform: skewX(-20deg) translateX(520%); } }
+.founder-badge .fb-title {
+  font-family: var(--font-body); font-style: normal; font-weight: 700;
+  font-size: 0.66rem; letter-spacing: 0.34em; text-indent: 0.34em; text-transform: uppercase;
+  color: var(--gold-lo); line-height: 1.2;
+}
+.founder-badge .fb-rule {
+  display: block; width: 46px; height: 1.5px; margin: 0.3rem auto 0.2rem;
+  background: var(--grad-gold); background-size: 200% auto; animation: shimmer 4s linear infinite;
+}
+.founder-badge .fb-name {
+  font-family: var(--font-script); font-style: normal; font-weight: 400;
+  font-size: 1.75rem; line-height: 1.1;
+  background: var(--grad-gold); background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shimmer 4s linear infinite;
+  padding: 0 0.15em 0.05em; /* gradient text needs box room for the script's swashes */
 }

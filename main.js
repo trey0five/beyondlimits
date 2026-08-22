@@ -352,42 +352,52 @@
     addEventListener('load', fsScene);
     addEventListener('resize', fsScene);
   }
-  /* team carousel: auto-advances every 3s on mobile, pauses while
-     touching, and never yanks a card whose bio is open */
+  /* team carousel (mobile): transform-driven like the service garden —
+     no native scroll-snap, so swipes and the auto-advance never fight.
+     Pauses while touching, never yanks a card whose bio is open. */
   const teamGrid = $('.team-grid');
   if (teamGrid) {
     const teamCards = $$('.team-card', teamGrid);
     const tgMobile = () => matchMedia('(max-width: 860px)').matches;
+    const tgViewport = document.createElement('div');
+    tgViewport.className = 'team-viewport';
+    teamGrid.parentNode.insertBefore(tgViewport, teamGrid);
+    tgViewport.appendChild(teamGrid);
     let tgIdx = 0;
     let tgTimer;
     let tgHold = false;
-    const tgCenter = (el) =>
-      el.offsetLeft - teamGrid.offsetLeft - (teamGrid.clientWidth - el.clientWidth) / 2;
+    const tgApply = () => {
+      if (!tgMobile()) { teamGrid.style.transform = ''; return; }
+      const el = teamCards[tgIdx];
+      const x = el.offsetLeft - teamGrid.offsetLeft - (tgViewport.clientWidth - el.offsetWidth) / 2;
+      teamGrid.style.transform = `translateX(${-x}px)`;
+    };
+    const tgGo = (n) => {
+      tgIdx = ((n % teamCards.length) + teamCards.length) % teamCards.length;
+      tgApply();
+    };
     const tgNext = () => {
       if (!tgMobile() || tgHold) return;
       if (teamCards.some((c) => c.classList.contains('open'))) return;
-      tgIdx = (tgIdx + 1) % teamCards.length;
-      teamGrid.scrollTo({ left: tgCenter(teamCards[tgIdx]), behavior: 'smooth' });
+      tgGo(tgIdx + 1);
     };
     const tgStart = () => {
       clearInterval(tgTimer);
       if (!reduceMotion) tgTimer = setInterval(tgNext, 3000);
     };
-    // re-bloom: when a card slides out of the carousel view, silently
-    // reset its flowers so they burst open again on the next pass
+    // re-bloom: when a card slides out of view, silently reset its
+    // flowers so they burst open again on the next pass
     const rebloomIO = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           if (!tgMobile()) continue;
           const card = e.target;
           if (e.isIntersecting) {
-            if (!card.classList.contains('in')) {
-              requestAnimationFrame(() => card.classList.add('in'));
-            }
+            if (!card.classList.contains('in')) requestAnimationFrame(() => card.classList.add('in'));
           } else if (card.classList.contains('in') && !card.classList.contains('open')) {
             card.classList.add('noanim');
             card.classList.remove('in');
-            void card.offsetWidth; // flush so the reset lands before re-entering
+            void card.offsetWidth;
             card.classList.remove('noanim');
           }
         }
@@ -395,24 +405,22 @@
       { threshold: 0.5 }
     );
     teamCards.forEach((c) => rebloomIO.observe(c));
-    teamGrid.addEventListener('touchstart', () => { tgHold = true; }, { passive: true });
-    teamGrid.addEventListener('touchend', () => { tgHold = false; tgStart(); }, { passive: true });
-    teamGrid.addEventListener('touchcancel', () => { tgHold = false; tgStart(); }, { passive: true });
-    // after a manual swipe, continue from wherever the user landed
-    let tgScrollT;
-    teamGrid.addEventListener('scroll', () => {
-      clearTimeout(tgScrollT);
-      tgScrollT = setTimeout(() => {
-        const center = teamGrid.scrollLeft + teamGrid.clientWidth / 2;
-        let best = 0;
-        let bd = Infinity;
-        teamCards.forEach((el, i) => {
-          const d = Math.abs(el.offsetLeft - teamGrid.offsetLeft + el.clientWidth / 2 - center);
-          if (d < bd) { bd = d; best = i; }
-        });
-        tgIdx = best;
-      }, 120);
-    }, { passive: true });
+    // swipe
+    let tgX = null;
+    tgViewport.addEventListener('touchstart', (e) => { tgHold = true; tgX = e.touches[0].clientX; }, { passive: true });
+    const tgRelease = (e) => {
+      tgHold = false;
+      if (tgX !== null && e.changedTouches) {
+        const dx = e.changedTouches[0].clientX - tgX;
+        if (Math.abs(dx) > 40 && !teamCards.some((c) => c.classList.contains('open'))) tgGo(tgIdx + (dx < 0 ? 1 : -1));
+      }
+      tgX = null;
+      tgStart();
+    };
+    tgViewport.addEventListener('touchend', tgRelease, { passive: true });
+    tgViewport.addEventListener('touchcancel', tgRelease, { passive: true });
+    addEventListener('resize', tgApply);
+    tgApply();
     // the carousel only starts once the team section scrolls into view,
     // and it holds on the co-founder for a beat before moving
     const tgIO = new IntersectionObserver(
@@ -422,7 +430,7 @@
       },
       { threshold: 0.3 }
     );
-    tgIO.observe(teamGrid);
+    tgIO.observe(tgViewport);
   }
 
   /* mobile-only "Read Her Story" expander in the founder bio */
