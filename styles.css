@@ -273,12 +273,12 @@ p { max-width: 65ch; }
 .meadow.near {
   position: relative;
   height: min(24vh, 268px);
-  background-image: url("assets/img/hero3-grass.png");
+  background-image: url("assets/img/hero3-grass.webp");
 }
 /* colorful wildflowers: a separate layer that rises after the grass */
 .meadow.blooms {
   height: min(18vh, 200px);
-  background-image: url("assets/img/hero3-flowers.png");
+  background-image: url("assets/img/hero3-flowers.webp");
 }
 /* mirrored second pass breaks the grass tile repetition (grass only —
    doubling the flowers made them swallow the meadow) */
@@ -583,7 +583,7 @@ p { max-width: 65ch; }
 /* grass strip rising into place */
 .fs-meadow {
   position: absolute; left: -1%; right: -1%; bottom: -2px; height: 170px;
-  background: url("assets/img/meadow2-lush.png") repeat-x bottom center / auto 100%;
+  background: url("assets/img/meadow2-lush.webp") repeat-x bottom center / auto 100%;
   pointer-events: none;
   transform: translateY(103%);
   transition: transform 3.2s cubic-bezier(0.22, 0.9, 0.3, 1) 0.9s;
@@ -744,7 +744,7 @@ p { max-width: 65ch; }
 }
 @media (max-width: 620px) {
   .fs-meadow { height: 88px; }
-  .fs-tree { height: calc(var(--th, 200px) * 0.72); }
+  .fs-tree { height: calc(var(--th, 200px) * 0.72); opacity: 0.38; } /* keep founder copy readable over realistic trees */
   .founder-photo { width: min(250px, 74vw); }
   .founder-quote p { font-size: 1.18rem; }
 }
@@ -1676,7 +1676,7 @@ p { max-width: 65ch; }
 .footer { position: relative; text-align: center; background: var(--sage-100); overflow: hidden; }
 .footer-meadow {
   height: 130px;
-  background: url("assets/img/hero-meadow-far.png") repeat-x bottom center / auto 100%;
+  background: url("assets/img/hero-meadow-far.webp") repeat-x bottom center / auto 100%;
   opacity: 0.45;
 }
 .footer-inner { position: relative; padding: 1rem 1.4rem 2.6rem; }

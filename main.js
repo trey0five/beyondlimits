@@ -190,32 +190,19 @@
   );
   $$('[data-count]').forEach((el) => counterIO.observe(el));
 
-  /* ── Hero: trees pop & grass rises when the meadow scrolls
-         into view, then both keep parallaxing ─────────────── */
+  /* ── Hero: staged meadow entrance on a timer (~2s after the
+         page loads), then everything keeps parallaxing ─────── */
   const stage = $('#meadowStage');
   const treeLine = $('#treeLine');
   const near = $('#meadowNear');
-  // The entrance waits for BOTH: the user has actually scrolled down,
-  // AND the meadow strip is in view. Visibility alone isn't enough —
-  // on tall screens the strip peeks above the fold at load.
   let stageSeen = false;
-  let stageInView = false;
-  const tryStage = () => {
-    if (stageSeen || !stageInView || window.scrollY < 60) return;
+  const startStage = () => {
+    if (stageSeen) return;
     stageSeen = true;
-    stage.classList.add('in'); // trees pop via CSS
-    stageIO.disconnect();
-    removeEventListener('scroll', tryStage);
+    stage.classList.add('in'); // trees grow via CSS delays
   };
-  const stageIO = new IntersectionObserver(
-    (entries) => {
-      stageInView = entries.some((e) => e.isIntersecting);
-      tryStage();
-    },
-    { threshold: 0.3 }
-  );
-  stageIO.observe(stage);
-  addEventListener('scroll', tryStage, { passive: true });
+  window.addEventListener('load', () => setTimeout(startStage, reduceMotion ? 0 : 2000));
+  setTimeout(startStage, 7000); // safety net if load stalls
 
   let mouseX = 0;
   const blooms = $('#meadowBlooms');
@@ -447,7 +434,7 @@
       title: 'Occupational Therapy',
       tag: 'Confidence for the "occupations" of childhood',
       img: 'assets/img/svc-ot.jpg',
-      bloom: 'assets/img/bloom-ot.png',
+      bloom: 'assets/img/bloom-ot.webp',
       body: 'Occupational therapy (OT) helps children develop the essential skills needed for the "occupations" of childhood: playing, learning, and performing daily self-care tasks. Our pediatric OT services focus on enhancing fine motor coordination, sensory processing, and emotional regulation to help your child navigate their world with greater independence. By addressing challenges in motor planning or sensory integration, we empower children to gain confidence in their physical abilities and successfully participate in home and school activities.',
       points: ['Fine motor coordination', 'Sensory processing', 'Emotional regulation', 'Independence at home & school'],
       interest: 'Occupational Therapy',
@@ -456,7 +443,7 @@
       title: 'Speech Therapy',
       tag: 'Helping children find their voice',
       img: 'assets/img/svc-speech.jpg',
-      bloom: 'assets/img/bloom-speech.png',
+      bloom: 'assets/img/bloom-speech.webp',
       body: 'Speech and language therapy is dedicated to helping children find their voice and connect with those around them. We support a wide range of communication needs, from articulation and speech delays to social pragmatics and language comprehension. Our therapists work one-on-one with your child to build the foundational skills necessary for clear expression and meaningful interaction. Whether your child is working on stuttering, expanding their vocabulary, or improving social skills, we provide the tools to help them communicate with ease and confidence.',
       points: ['Articulation & speech delays', 'Language comprehension', 'Social pragmatics', 'Vocabulary & fluency'],
       interest: 'Speech Therapy',
@@ -465,7 +452,7 @@
       title: 'Academic Tutoring',
       tag: 'Beyond the grade — toward a love of learning',
       img: 'assets/img/svc-tutoring.jpg',
-      bloom: 'assets/img/bloom-tutoring.png',
+      bloom: 'assets/img/bloom-tutoring.webp',
       body: 'Our academic tutoring services go beyond simple homework help to provide a personalized learning experience that builds both competence and confidence. We offer specialized support in core subjects like math, reading, and writing, tailoring every session to your child’s unique learning style and academic goals. By identifying and closing learning gaps while teaching effective study habits, we help students move beyond the grade and develop a genuine love for learning. Our goal is to transform academic frustration into a sense of accomplishment and classroom success.',
       points: ['Math, reading & writing', 'Tailored to learning style', 'Effective study habits', 'Confidence & accomplishment'],
       interest: 'Academic Tutoring',
@@ -474,7 +461,7 @@
       title: 'Micro School Program',
       tag: 'A school day that bends to fit your child',
       img: 'assets/img/svc-microschool.jpg',
-      bloom: 'assets/img/bloom-micro.png',
+      bloom: 'assets/img/bloom-micro.webp',
       body: 'Our Micro School offers small class sizes with individualized attention in a nurturing, supportive setting designed for children with diverse learning needs. Each student receives an individual evaluation to help create a personalized program focused on their strengths, goals, and unique needs. Our approach combines academics, life skills, movement, creativity, and social development in a meaningful and engaging way.',
       points: ['Small class sizes', 'Individualized learning plans', 'One-on-one support included', 'All staff CPR certified'],
       note: '<strong>Programs from $28,000/year</strong><br />Registration $350 &middot; Hands-on supply fee $500 &middot; Depending on your child’s individual needs and services.',
@@ -485,7 +472,7 @@
       title: 'Art & Music Therapy',
       tag: 'Creative expression as a path to growth',
       img: 'assets/img/micro-arts.jpg',
-      bloom: 'assets/img/bloom-art.png',
+      bloom: 'assets/img/bloom-art.webp',
       body: 'Part of our Micro School day, art and music give children a joyful way to express themselves, build focus, and grow fine motor and social skills. Creative sessions are woven into each student’s personalized program, so every child can explore, create, and shine in their own way.',
       points: ['Creative self-expression', 'Focus & fine motor skills', 'Confidence through creating', 'Part of the Micro School day'],
       link: { href: '#microschool', label: 'Explore the Micro School' },
@@ -495,7 +482,7 @@
       title: 'Animal & Horse Therapy',
       tag: 'Gentle partners in building confidence',
       img: 'assets/img/micro-horse.jpg',
-      bloom: 'assets/img/bloom-equine.png',
+      bloom: 'assets/img/bloom-equine.webp',
       body: 'Time with animals — including our equine sessions — is one of the most loved parts of the Beyond Limits Micro School. Caring for and connecting with a gentle animal helps children practice patience, empathy, communication, and calm confidence in a way no classroom can.',
       points: ['Patience & empathy', 'Calm, regulated confidence', 'Communication without words', 'Part of the Micro School day'],
       link: { href: '#microschool', label: 'Explore the Micro School' },
@@ -505,7 +492,7 @@
       title: 'Yoga & Physical Education',
       tag: 'Strong bodies, settled minds',
       img: 'assets/img/micro-yoga.jpg',
-      bloom: 'assets/img/bloom-yoga.png',
+      bloom: 'assets/img/bloom-yoga.webp',
       body: 'Movement is built into every Micro School day. Yoga and physical education help children develop body awareness, balance, and self-regulation — playful, therapeutic movement that supports learning everywhere else in their program.',
       points: ['Body awareness & balance', 'Self-regulation', 'Playful, therapeutic movement', 'Part of the Micro School day'],
       link: { href: '#microschool', label: 'Explore the Micro School' },
@@ -784,12 +771,12 @@
   const starRowHTML = () =>
     [1, 2, 3, 4, 5].map((n) =>
       `<button type="button" class="rate-star${n <= rvStars ? ' on' : ''}" data-star="${n}" aria-label="${n} star${n > 1 ? 's' : ''}">
-        <img src="assets/img/bloom-micro.png" alt="" /></button>`).join('');
+        <img src="assets/img/bloom-micro.webp" alt="" /></button>`).join('');
   const reviewModal = () => {
     rvStars = 5;
     openModal(`
       <div class="mo-body" style="text-align:center">
-        <img class="mo-logo" src="assets/img/bloom-art.png" alt="" />
+        <img class="mo-logo" src="assets/img/bloom-art.webp" alt="" />
         <h3 class="mo-title">Share Your Story</h3>
         <p class="mo-tag">How has Beyond Limits helped your child grow?</p>
         <form class="mo-form" id="reviewForm" novalidate>
