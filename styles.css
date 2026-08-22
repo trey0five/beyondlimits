@@ -277,11 +277,12 @@ p { max-width: 65ch; }
 }
 /* colorful wildflowers: a separate layer that rises after the grass */
 .meadow.blooms {
-  height: min(19vh, 212px);
+  height: min(15vh, 168px);
   background-image: url("assets/img/hero3-flowers.png");
 }
-/* mirrored second pass breaks the tile repetition and doubles density */
-.meadow.near::after, .meadow.blooms::after {
+/* mirrored second pass breaks the grass tile repetition (grass only —
+   doubling the flowers made them swallow the meadow) */
+.meadow.near::after {
   content: "";
   position: absolute; inset: 0;
   background: inherit;
@@ -306,7 +307,7 @@ p { max-width: 65ch; }
   .tree:nth-of-type(4) { display: block; left: 22%; height: 30vh; }  /* oak */
   .tree:nth-of-type(6) { display: block; left: 64%; height: 26vh; }  /* willow */
   .meadow.near { height: 95px; }
-  .meadow.blooms { height: 92px; }
+  .meadow.blooms { height: 70px; }
   .hero-inner { padding-bottom: 240px; }
 }
 
