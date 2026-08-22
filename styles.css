@@ -2071,7 +2071,7 @@ p { max-width: 65ch; }
 .reviews .wrap { position: relative; z-index: 1; }
 .rv-scene { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
 .rv-tree {
-  position: absolute; bottom: 74px;
+  position: absolute; bottom: 26px; /* trunks planted inside the grass, not on its tips */
   height: min(46vh, 430px); width: auto; opacity: 0.95;
   transform: scale(0); transform-origin: bottom center;
   transition: transform 1.7s cubic-bezier(0.34, 1.25, 0.44, 1);
@@ -2290,7 +2290,7 @@ p { max-width: 65ch; }
   .rv-add { margin-top: 1.1rem; }
   .rv-add .btn.lg { padding: 0.7rem 1.4rem; font-size: 0.92rem; }
   .rv-add-note { font-size: 0.82rem; margin-top: 0.5rem; max-width: 17rem; }
-  .rv-tree { height: 170px; bottom: 24px; }
+  .rv-tree { height: 170px; bottom: 6px; }
   .rv-tree.l { left: -9%; } .rv-tree.r { right: -9%; }
   .rv-grass { height: 84px; }
 }
