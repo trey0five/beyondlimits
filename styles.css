@@ -1884,3 +1884,65 @@ p { max-width: 65ch; }
 
 .team-card.cofounder .tf-photo { z-index: 6; }
 .team-card.cofounder .tf-petals { z-index: 5; }
+
+/* ── Micro-school album on phones: centered spread, nav row below ── */
+@media (max-width: 760px) {
+  .book-scene { width: min(430px, 90vw); }
+  /* arrows join the dots in a nav row under the book — always visible,
+     never clipped by the screen edge */
+  .bk-nav { display: flex; align-items: center; justify-content: center; gap: 1.1rem; margin-top: 1.7rem; }
+  .bk-arrow {
+    position: static; translate: none;
+    width: 42px; height: 42px;
+    background: var(--grad-gold); background-size: 200% auto;
+    color: #fffbe9; border: 2px solid rgba(255, 253, 248, 0.9);
+    box-shadow: 0 10px 22px -8px rgba(0, 0, 0, 0.45), 0 0 0 3px rgba(232, 199, 106, 0.35);
+    opacity: 1;
+  }
+  .bk-arrow:disabled { opacity: 0.4; }
+  .bk-dots { margin-top: 0; }
+  .bk-hint { margin-top: 1.2rem; }
+}
+
+/* ── Meet the Founder pill: gold shimmer with twinkling stars ── */
+.founder-head .kicker {
+  position: relative;
+  background: var(--grad-gold); background-size: 200% auto;
+  animation: shimmer 4s linear infinite, pillFloat 3.6s ease-in-out infinite;
+  color: #fffbe9; border: 1.5px solid rgba(255, 253, 248, 0.75);
+  padding: 0.5rem 2rem;
+  box-shadow: 0 12px 28px -10px rgba(138, 100, 32, 0.65), 0 0 0 4px rgba(232, 199, 106, 0.28);
+}
+.founder-head .kicker::before, .founder-head .kicker::after {
+  content: "✦"; position: absolute; top: 50%; translate: 0 -50%;
+  color: var(--gold-hi); font-size: 0.95rem; letter-spacing: 0; text-indent: 0;
+  text-shadow: 0 0 10px rgba(232, 199, 106, 0.9);
+  animation: twinkle 2.2s ease-in-out infinite;
+}
+.founder-head .kicker::before { left: 0.55rem; }
+.founder-head .kicker::after { right: 0.55rem; animation-delay: 1.1s; }
+@keyframes pillFloat { 50% { transform: translateY(-4px); } }
+
+/* ── Founder badge: gold-edged, floating, tilting, sparkling ── */
+.founder-badge {
+  background:
+    linear-gradient(var(--white), var(--white)) padding-box,
+    var(--grad-gold) border-box;
+  background-size: auto, 200% auto;
+  border: 2px solid transparent;
+  box-shadow: 0 20px 44px -16px rgba(138, 100, 32, 0.55), 0 0 0 4px rgba(255, 253, 248, 0.85), 0 0 30px rgba(232, 199, 106, 0.35);
+  animation: badgeFloat 4.6s ease-in-out infinite;
+  overflow: visible;
+}
+.founder-badge::before, .founder-badge::after {
+  content: "✦"; position: absolute;
+  color: var(--gold); font-style: normal; font-size: 0.9rem;
+  text-shadow: 0 0 10px rgba(232, 199, 106, 0.95);
+  animation: twinkle 2.4s ease-in-out infinite;
+}
+.founder-badge::before { left: -16px; top: -10px; }
+.founder-badge::after { right: -14px; bottom: -10px; animation-delay: 1.2s; font-size: 0.75rem; }
+@keyframes badgeFloat {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50% { transform: translateY(-11px) rotate(1.5deg); }
+}

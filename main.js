@@ -630,6 +630,12 @@
     const bkPrev = $('#bkPrev');
     const bkNext = $('#bkNext');
     const BN = bkSheets.length;
+    // arrows + dots share one nav row (on phones the arrows sit inline
+    // beside the dots; on desktop they stay absolutely positioned)
+    const bkNav = document.createElement('div');
+    bkNav.className = 'bk-nav';
+    bkDots.parentNode.insertBefore(bkNav, bkDots);
+    bkNav.append(bkPrev, bkDots, bkNext);
     let bkStep = 0; // number of sheets turned; 0 = closed on the cover
     let bkBusy = false;
     let bkInView = false;
