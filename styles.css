@@ -1832,3 +1832,14 @@ p { max-width: 65ch; }
   [data-load], [data-reveal] { opacity: 1 !important; transform: none !important; }
   .sprout { animation: none; }
 }
+
+/* founder on phones: portrait sits higher; small whole trees flank the arch */
+@media (max-width: 960px) {
+  .founder-grid { padding-top: clamp(4.2rem, 15vw, 5.6rem); }
+  .fs-sun { width: clamp(88px, 22vw, 110px); }
+  .fs-tree { opacity: 0.95; }
+  .fs-tree:nth-of-type(1) { left: -7%; height: 165px; }  /* oak */
+  .fs-tree:nth-of-type(2) { left: 5%;  height: 132px; }  /* birch */
+  .fs-tree:nth-of-type(4) { left: 89%; height: 138px; }  /* birch, flipped */
+  .fs-tree:nth-of-type(5) { left: 78%; height: 178px; }  /* blossom */
+}
