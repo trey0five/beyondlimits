@@ -238,7 +238,7 @@ p { max-width: 65ch; }
     var(--cream);
 }
 .sparkles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-.hero-inner { position: relative; z-index: 3; padding: 7.5rem 1.4rem 34vh; max-width: 60rem; }
+.hero-inner { position: relative; z-index: 3; padding: 7.5rem 1.4rem 38vh; max-width: 60rem; }
 .hero-logo { width: clamp(200px, 22vw, 300px); margin: 0 auto 1.1rem; filter: drop-shadow(0 6px 14px rgba(185, 138, 47, 0.18)); }
 .hero-kicker { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.3em; text-indent: 0.3em; text-transform: uppercase; color: var(--sage-600); margin: 0 auto 1.2rem; }
 .hero-title { font-size: clamp(2.6rem, 6.5vw, 5rem); font-weight: 500; margin: 0 0 1.4rem; }
@@ -272,12 +272,12 @@ p { max-width: 65ch; }
 }
 .meadow.near {
   position: relative;
-  height: min(20vh, 225px);
+  height: min(24vh, 268px);
   background-image: url("assets/img/hero3-grass.png");
 }
 /* colorful wildflowers: a separate layer that rises after the grass */
 .meadow.blooms {
-  height: min(15vh, 168px);
+  height: min(18vh, 200px);
   background-image: url("assets/img/hero3-flowers.png");
 }
 /* mirrored second pass breaks the grass tile repetition (grass only —
@@ -303,12 +303,12 @@ p { max-width: 65ch; }
 @media (max-width: 700px) {
   /* three big trees instead of six */
   .tree { display: none; }
-  .tree:nth-of-type(1) { display: block; left: -2%; height: 26vh; }  /* poplar */
-  .tree:nth-of-type(4) { display: block; left: 22%; height: 30vh; }  /* oak */
-  .tree:nth-of-type(6) { display: block; left: 64%; height: 26vh; }  /* willow */
-  .meadow.near { height: 95px; }
-  .meadow.blooms { height: 70px; }
-  .hero-inner { padding-bottom: 240px; }
+  .tree:nth-of-type(1) { display: block; left: -2%; height: 33vh; }  /* poplar */
+  .tree:nth-of-type(4) { display: block; left: 22%; height: 38vh; }  /* oak */
+  .tree:nth-of-type(6) { display: block; left: 64%; height: 34vh; }  /* willow */
+  .meadow.near { height: 118px; }
+  .meadow.blooms { height: 86px; }
+  .hero-inner { padding-bottom: 280px; }
 }
 
 
