@@ -1041,7 +1041,7 @@
   });
 
   /* ── Contact ───────────────────────────────────────────── */
-  const ADMIN_EMAIL = 'hello@beyondlimitstherapy.com'; // UPDATE before launch
+  const ADMIN_EMAIL = 'beyondlimits.cc.entc@gmail.com'; // every form and review submission goes here
 
   /* ── Footer year ───────────────────────────────────────── */
   $('#year').textContent = new Date().getFullYear();

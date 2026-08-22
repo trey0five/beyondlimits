@@ -36,8 +36,8 @@ python3 -m http.server 8080
 
 ## ⚠️ Before launch — placeholders to replace
 
-1. **Contact details** — the address, phone, hours in `index.html` (search for
-   `UPDATE`) and `ADMIN_EMAIL` in `main.js` are placeholders.
+1. **Contact details** — set (954-793-0253, 12233 SW 55th St Unit 812, Cooper City FL 33330,
+   beyondlimits.cc.entc@gmail.com). Forms and review submissions email `ADMIN_EMAIL` in `main.js`.
 2. **Reviews** — the testimonials in the `#reviews` section are **sample copy**,
    clearly marked with an HTML comment. Replace with real family reviews
    (with permission) before going live.
