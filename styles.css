@@ -486,7 +486,7 @@ p { max-width: 65ch; }
   margin-bottom: 0.9rem; position: relative;
 }
 .stat-ic svg { width: 20px; height: 20px; }
-.stat strong { display: block; font-family: var(--font-display); font-size: 2.7rem; line-height: 1; font-variant-numeric: tabular-nums; margin-bottom: 0.4rem; position: relative; }
+.stat strong { display: block; font-family: var(--font-display); font-size: 2.7rem; line-height: 1.15; padding: 0.04em 0.15em 0.02em 0; font-variant-numeric: tabular-nums; margin-bottom: 0.25rem; position: relative; }
 .stat-label { display: block; font-size: 0.86rem; color: var(--muted); line-height: 1.4; position: relative; }
 .stat-spark {
   position: absolute; top: 0.8rem; right: 0.9rem;
@@ -515,7 +515,7 @@ p { max-width: 65ch; }
 .stack-img.pos-small { left: 0; top: 58%; width: 46%; border-width: 6px; z-index: 2; }
 /* mid-flight: the image headed for the big slot rides on top, and
    both lift, tilt, and brighten as they cross */
-.photo-stack.swapping .pos-big { z-index: 3; }
+/* the small photo always stays in front — no mid-flight z-index swap */
 .photo-stack.swapping .stack-img { animation: swapLift 1.1s cubic-bezier(0.4, 0.1, 0.3, 1); }
 @keyframes swapLift {
   45% { transform: scale(1.07) rotate(-2.5deg); filter: brightness(1.07); }
