@@ -2087,7 +2087,8 @@ p { max-width: 65ch; }
 }
 .reviews.in .rv-grass { transform: none; }
 .rv-vine {
-  position: absolute; top: -14px; left: 2.5%;
+  position: absolute; top: -14px; right: 2.5%; left: auto;
+  scale: -1 1; /* mirrored so the roses lean in toward the card */
   width: min(240px, 30vw);
   transform-origin: top center;
   transform: translateY(-105%);
@@ -2191,7 +2192,7 @@ p { max-width: 65ch; }
   .reviews { padding-bottom: 12rem; }
   .rv-tree { height: 138px; bottom: 34px; opacity: 0.9; }
   .rv-tree.l { left: -6%; } .rv-tree.r { right: -6%; }
-  .rv-vine { width: 92px; left: -1%; top: -10px; }
+  .rv-vine { width: 92px; right: -1%; left: auto; top: -10px; }
   .rv-add { position: relative; z-index: 2; }
   .ci-bouquet { width: 118px; top: -62px; right: -14px; z-index: 0; }
   .ci-row, .quick-actions { position: relative; z-index: 1; }
