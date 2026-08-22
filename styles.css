@@ -2294,3 +2294,6 @@ p { max-width: 65ch; }
   .rv-tree.l { left: -9%; } .rv-tree.r { right: -9%; }
   .rv-grass { height: 84px; }
 }
+
+/* the five-tap owner shortcut shouldn't highlight text while tapping */
+.founder-name, .founder-photo { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }

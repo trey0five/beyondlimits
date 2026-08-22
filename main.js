@@ -967,6 +967,20 @@
   const checkKeeper = () => { if (location.hash === '#garden-keeper') keeperModal(); };
   addEventListener('hashchange', checkKeeper);
   checkKeeper();
+  // hidden owner shortcut: tap Vickie (her name or portrait) five times
+  // in quick succession to open the Garden Keeper
+  let vTaps = 0;
+  let vTapT;
+  ['.founder-name', '.founder-photo'].forEach((sel) => {
+    const el = $(sel);
+    if (!el) return;
+    el.addEventListener('click', () => {
+      vTaps++;
+      clearTimeout(vTapT);
+      vTapT = setTimeout(() => { vTaps = 0; }, 2500);
+      if (vTaps >= 5) { vTaps = 0; keeperModal(); }
+    });
+  });
 
   /* ── Approach carousel: auto-rotates on mobile, pauses
          while the user is touching, resumes on release ────── */
