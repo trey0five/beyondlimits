@@ -273,16 +273,29 @@ p { max-width: 65ch; }
 .meadow.near {
   position: relative;
   height: min(20vh, 225px);
-  background-image: url("assets/img/hero-meadow-near.png");
+  background-image: url("assets/img/hero3-grass.png");
+}
+/* colorful wildflowers: a separate layer that rises after the grass */
+.meadow.blooms {
+  height: min(19vh, 212px);
+  background-image: url("assets/img/hero3-flowers.png");
+}
+/* mirrored second pass breaks the tile repetition and doubles density */
+.meadow.near::after, .meadow.blooms::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: inherit;
+  background-position: 41% bottom;
+  transform: scaleX(-1);
 }
 .tree-line { position: absolute; inset: auto 0 6px 0; will-change: transform; }
 .tree {
   position: absolute; bottom: 0; left: var(--x, 50%);
   height: var(--th, 28vh); width: auto;
-  opacity: 0.88;
+  opacity: 0.92;
   transform: scale(0);
   transform-origin: bottom center;
-  transition: transform 0.9s cubic-bezier(0.34, 1.45, 0.44, 1) var(--d, 0s);
+  transition: transform 1.6s cubic-bezier(0.34, 1.25, 0.44, 1) var(--d, 0s);
 }
 .tree.flip { scale: -1 1; }
 .meadow-stage.in .tree { transform: scale(1); }
@@ -293,6 +306,7 @@ p { max-width: 65ch; }
   .tree:nth-of-type(4) { display: block; left: 22%; height: 30vh; }  /* oak */
   .tree:nth-of-type(6) { display: block; left: 64%; height: 26vh; }  /* willow */
   .meadow.near { height: 95px; }
+  .meadow.blooms { height: 92px; }
   .hero-inner { padding-bottom: 240px; }
 }
 

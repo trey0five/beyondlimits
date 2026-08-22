@@ -218,7 +218,8 @@
   addEventListener('scroll', tryStage, { passive: true });
 
   let mouseX = 0;
-  if (!reduceMotion && treeLine && near) {
+  const blooms = $('#meadowBlooms');
+  if (!reduceMotion && treeLine && near && blooms) {
     addEventListener('mousemove', (e) => {
       mouseX = (e.clientX / innerWidth - 0.5) * 2;
     }, { passive: true });
@@ -226,17 +227,25 @@
     const clamp01 = (v) => Math.min(Math.max(v, 0), 1);
     let enterStart = 0;
     const drift = (t) => {
-      // grass rise begins once the meadow has been scrolled into view
+      // staged entrance once the meadow scrolls into view:
+      // grass rises first, wildflowers bloom up through it after,
+      // and the trees (CSS-delayed) grow in last
       if (!enterStart && stageSeen) enterStart = t;
       let nearRise = near.offsetHeight + 20;
-      if (enterStart) nearRise *= 1 - easeOut(clamp01((t - enterStart - 250) / 1300));
+      let bloomRise = blooms.offsetHeight + 30;
+      if (enterStart) {
+        nearRise *= 1 - easeOut(clamp01((t - enterStart - 250) / 1300));
+        bloomRise *= 1 - easeOut(clamp01((t - enterStart - 1500) / 1200));
+      }
       treeLine.style.transform = `translateX(${mouseX * -9}px)`;
       near.style.transform = `translateX(${mouseX * -26}px) translateY(${nearRise}px)`;
+      blooms.style.transform = `translateX(${mouseX * -34}px) translateY(${bloomRise}px)`;
       requestAnimationFrame(drift);
     };
     requestAnimationFrame(drift);
-  } else if (near) {
-    near.style.transform = 'none';
+  } else {
+    if (near) near.style.transform = 'none';
+    if (blooms) blooms.style.transform = 'none';
   }
 
   /* ── Hero: floating gold sparkle particles ─────────────── */
